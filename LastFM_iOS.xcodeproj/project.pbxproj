@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -89,12 +89,10 @@
 		C220460022EF39EF007FFE08 /* LastFM_iOS */ = {
 			isa = PBXGroup;
 			children = (
-				C220460122EF39EF007FFE08 /* AppDelegate.swift */,
-				C220460522EF39EF007FFE08 /* Main.storyboard */,
-				C220462122EF4606007FFE08 /* SavedAlbumsTableViewController.swift */,
-				C220460822EF39F1007FFE08 /* Assets.xcassets */,
-				C220460A22EF39F1007FFE08 /* LaunchScreen.storyboard */,
-				C220460D22EF39F1007FFE08 /* Info.plist */,
+				C220462622EF7769007FFE08 /* App */,
+				C220462522EF7756007FFE08 /* ViewController */,
+				C220462822EF777D007FFE08 /* Resources */,
+				C220462A22EF7815007FFE08 /* Support Files */,
 			);
 			path = LastFM_iOS;
 			sourceTree = "<group>";
@@ -108,6 +106,48 @@
 			path = LastFM_iOSTests;
 			sourceTree = "<group>";
 		};
+		C220462522EF7756007FFE08 /* ViewController */ = {
+			isa = PBXGroup;
+			children = (
+				C220462122EF4606007FFE08 /* SavedAlbumsTableViewController.swift */,
+			);
+			path = ViewController;
+			sourceTree = "<group>";
+		};
+		C220462622EF7769007FFE08 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				C220460122EF39EF007FFE08 /* AppDelegate.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		C220462822EF777D007FFE08 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				C220462922EF77AB007FFE08 /* Storyboards */,
+				C220460822EF39F1007FFE08 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		C220462922EF77AB007FFE08 /* Storyboards */ = {
+			isa = PBXGroup;
+			children = (
+				C220460A22EF39F1007FFE08 /* LaunchScreen.storyboard */,
+				C220460522EF39EF007FFE08 /* Main.storyboard */,
+			);
+			path = Storyboards;
+			sourceTree = "<group>";
+		};
+		C220462A22EF7815007FFE08 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				C220460D22EF39F1007FFE08 /* Info.plist */,
+			);
+			path = "Support Files";
+			sourceTree = "<group>";
+		};
 		DC03121466FA46E72D4DB336 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
@@ -116,7 +156,6 @@
 				D3EE983BBA7330B37DBE8369 /* Pods-LastFM_iOSTests.debug.xcconfig */,
 				377E03E244CDB4F5032E5E53 /* Pods-LastFM_iOSTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
