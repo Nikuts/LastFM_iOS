@@ -1,0 +1,6 @@
+framework module Pods_LastFM_iOS {
+  umbrella header "Pods-LastFM_iOS-umbrella.h"
+
+  export *
+  module * { export * }
+}
