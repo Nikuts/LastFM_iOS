@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		30DB611B3C0520E989BB2A41 /* Pods_LastFM_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2233F1794FD7C7E7583C223A /* Pods_LastFM_iOS.framework */; };
 		902F91C5E4D35E484D6646F2 /* Pods_LastFM_iOSTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18414DD2EFB2F9AA04B33853 /* Pods_LastFM_iOSTests.framework */; };
 		C202316422F0483000EB632A /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C202316322F0483000EB632A /* Info.plist */; };
 		C202317522F06E5400EB632A /* APIArtistSearchModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C202317422F06E5400EB632A /* APIArtistSearchModel.swift */; };
@@ -53,6 +54,7 @@
 		C202317E22F070FF00EB632A /* APIImageSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIImageSize.swift; sourceTree = "<group>"; };
 		C202318222F0714000EB632A /* APIOpensearchQueryModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIOpensearchQueryModel.swift; sourceTree = "<group>"; };
 		C202318522F0736800EB632A /* APIAttrModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = APIAttrModel.swift; sourceTree = "<group>"; };
+		C202318822F179E500EB632A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C22045FE22EF39EF007FFE08 /* LastFM_iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LastFM_iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C220460122EF39EF007FFE08 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C220460622EF39EF007FFE08 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -73,6 +75,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C220463822F040F2007FFE08 /* Alamofire.framework in Frameworks */,
+				30DB611B3C0520E989BB2A41 /* Pods_LastFM_iOS.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -100,6 +103,14 @@
 				C202318222F0714000EB632A /* APIOpensearchQueryModel.swift */,
 			);
 			path = API;
+			sourceTree = "<group>";
+		};
+		C202318722F179E500EB632A /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				C202318822F179E500EB632A /* Info.plist */,
+			);
+			path = "Support Files";
 			sourceTree = "<group>";
 		};
 		C22045F522EF39EF007FFE08 = {
@@ -130,6 +141,7 @@
 				C220463222F03CB7007FFE08 /* Model */,
 				C220463122F02E2D007FFE08 /* Network */,
 				C220462822EF777D007FFE08 /* Resources */,
+				C202318722F179E500EB632A /* Support Files */,
 			);
 			path = LastFM_iOS;
 			sourceTree = "<group>";
