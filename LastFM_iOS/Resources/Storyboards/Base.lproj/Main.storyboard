@@ -12,6 +12,7 @@
         <!--Navigation Controller-->
         <scene sceneID="jy9-aQ-Fkr">
             <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Mvq-I0-GM8" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <navigationController id="Lnc-Yi-wKU" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="uIv-eh-1YW">
                         <rect key="frame" x="0.0" y="44" width="414" height="44"/>
@@ -21,7 +22,6 @@
                         <segue destination="zrE-hi-SGN" kind="relationship" relationship="rootViewController" id="w8l-BG-AgM"/>
                     </connections>
                 </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Mvq-I0-GM8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1914" y="171"/>
         </scene>
@@ -30,9 +30,10 @@
             <objects>
                 <tableViewController id="zrE-hi-SGN" customClass="SavedAlbumsTableViewController" customModule="LastFM_iOS" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationItem key="navigationItem" title="Saved Albums" id="usK-MH-mO5">
+                        <barButtonItem key="backBarButtonItem" title=" " id="SGZ-f1-x2B"/>
                         <barButtonItem key="rightBarButtonItem" systemItem="search" id="JeS-y0-SY6">
                             <connections>
-                                <segue destination="adR-4J-Sc9" kind="show" id="v0P-Xu-bMK"/>
+                                <segue destination="gnl-Eh-2qC" kind="show" id="8Fx-Eg-zLL"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -41,62 +42,39 @@
             </objects>
             <point key="canvasLocation" x="-924" y="171"/>
         </scene>
-        <!--Table View Controller-->
-        <scene sceneID="QsI-FV-2L9">
+        <!--Artist Search Collection View Controller-->
+        <scene sceneID="jcF-Dn-m8o">
             <objects>
-                <tableViewController id="adR-4J-Sc9" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="vzf-U5-fwe">
+                <placeholder placeholderIdentifier="IBFirstResponder" id="ryj-40-aUy" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <collectionViewController id="gnl-Eh-2qC" customClass="ArtistSearchCollectionViewController" customModule="LastFM_iOS" customModuleProvider="target" sceneMemberID="viewController">
+                    <collectionView key="view" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" id="kEg-9Z-e61">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                        <searchBar key="tableHeaderView" contentMode="redraw" placeholder="Search for artists" id="M3d-2Y-84u">
-                            <rect key="frame" x="0.0" y="0.0" width="414" height="44"/>
-                            <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
-                            <textInputTraits key="textInputTraits"/>
-                            <connections>
-                                <outlet property="delegate" destination="adR-4J-Sc9" id="nph-PD-549"/>
-                            </connections>
-                        </searchBar>
-                        <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="817-3t-Nx7">
-                                <rect key="frame" x="0.0" y="72" width="414" height="44"/>
-                                <autoresizingMask key="autoresizingMask"/>
-                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="817-3t-Nx7" id="VNn-Qy-6U3">
-                                    <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
+                        <collectionViewFlowLayout key="collectionViewLayout" minimumLineSpacing="10" minimumInteritemSpacing="10" id="rVH-Yt-0p2">
+                            <size key="itemSize" width="50" height="50"/>
+                            <size key="headerReferenceSize" width="0.0" height="0.0"/>
+                            <size key="footerReferenceSize" width="0.0" height="0.0"/>
+                            <inset key="sectionInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                        </collectionViewFlowLayout>
+                        <cells>
+                            <collectionViewCell opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="GWM-28-2dC">
+                                <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO">
+                                    <rect key="frame" x="0.0" y="0.0" width="50" height="50"/>
                                     <autoresizingMask key="autoresizingMask"/>
-                                </tableViewCellContentView>
-                            </tableViewCell>
-                        </prototypes>
+                                </view>
+                            </collectionViewCell>
+                        </cells>
                         <connections>
-                            <outlet property="dataSource" destination="adR-4J-Sc9" id="dMz-Ri-CZR"/>
-                            <outlet property="delegate" destination="adR-4J-Sc9" id="vV6-yn-TaN"/>
+                            <outlet property="dataSource" destination="gnl-Eh-2qC" id="Mqn-CN-6sN"/>
+                            <outlet property="delegate" destination="gnl-Eh-2qC" id="iAB-GD-8ZQ"/>
                         </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" id="9kQ-aW-Q7C"/>
-                    <connections>
-                        <outlet property="searchDisplayController" destination="HsO-Xy-RCg" id="UeU-GL-TSi"/>
-                    </connections>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Gwf-ox-1aL" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <searchDisplayController id="Sh0-pC-1of">
-                    <connections>
-                        <outlet property="delegate" destination="adR-4J-Sc9" id="HfB-2f-TS4"/>
-                        <outlet property="searchContentsController" destination="adR-4J-Sc9" id="BEe-Sr-Bts"/>
-                        <outlet property="searchResultsDataSource" destination="adR-4J-Sc9" id="ilD-0A-eID"/>
-                        <outlet property="searchResultsDelegate" destination="adR-4J-Sc9" id="19X-qm-ggB"/>
-                    </connections>
-                </searchDisplayController>
-                <searchDisplayController id="HsO-Xy-RCg">
-                    <connections>
-                        <outlet property="delegate" destination="adR-4J-Sc9" id="Kgx-mc-WIZ"/>
-                        <outlet property="searchBar" destination="M3d-2Y-84u" id="z0J-3K-Ww1"/>
-                        <outlet property="searchContentsController" destination="adR-4J-Sc9" id="xxX-Qq-ya6"/>
-                        <outlet property="searchResultsDataSource" destination="adR-4J-Sc9" id="LPw-wL-6cG"/>
-                        <outlet property="searchResultsDelegate" destination="adR-4J-Sc9" id="kaW-Ib-hjv"/>
-                    </connections>
-                </searchDisplayController>
+                    </collectionView>
+                </collectionViewController>
             </objects>
-            <point key="canvasLocation" x="64" y="171"/>
+            <point key="canvasLocation" x="-55.072463768115945" y="170.75892857142856"/>
         </scene>
     </scenes>
 </document>
