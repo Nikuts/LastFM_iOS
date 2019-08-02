@@ -7,27 +7,26 @@
 //
 
 import UIKit
+import os.log
 
 private let reuseIdentifier = "Cell"
 
 class ArtistSearchCollectionViewController: UICollectionViewController, UISearchBarDelegate {
-
+    
+    var artists = [ArtistModel]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
         createSearchBar()
-        // Register cell classes
-        self.collectionView!.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
 
-        // Do any additional setup after loading the view.
-        NetworkProvider.getArtistByName(artistName: "cher", page: 1) { apiArtistSearch in
-            
-        }
+        self.collectionView!.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
     }
     
     func createSearchBar() {
+        
         let searchBar = UISearchBar()
         searchBar.showsCancelButton = false
         searchBar.placeholder = "Search for artist"
@@ -49,39 +48,35 @@ class ArtistSearchCollectionViewController: UICollectionViewController, UISearch
     // MARK: UICollectionViewDataSource
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
         return 1
     }
 
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of items
-        return 1
+        return artists.count
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
-    
-        // Configure the cell
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: ArtistCollectionViewCell.self), for: indexPath) as? ArtistCollectionViewCell else {
+            fatalError("Cell is not type of ArtistCollectionViewCell")
+        }
+        
+        let artist = artists[indexPath.row]
+        if let imageUrl = URL.init(string: artist.imageUrl ?? "") {
+            cell.image.af_setImage(withURL: imageUrl)
+        }
+        
+        cell.name.text = artist.name
     
         return cell
     }
-
-    override func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        
-        if (kind == UICollectionView.elementKindSectionHeader) {
-            let headerView:UICollectionReusableView =  collectionView.dequeueReusableSupplementaryView(ofKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "SearchBarHeader", for: indexPath)
-            
-            return headerView
-        }
-        
-        return UICollectionReusableView()
-        
-    }
-
     
     // MARK: UICollectionViewDelegate
-
+    
+    override func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        os_log("Clicked.")
+    }
+    
     /*
     // Uncomment this method to specify if the specified item should be highlighted during tracking
     override func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
@@ -111,19 +106,33 @@ class ArtistSearchCollectionViewController: UICollectionViewController, UISearch
     }
     */
 
-    //    MARK: Search
+    //    MARK: UISearchBarDelegate
+    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
+        searchBar.setShowsCancelButton(true, animated: true)
+        return true
+    }
+    
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        if(!(searchBar.text?.isEmpty)!){
-            //reload your data source if necessary
-            self.collectionView?.reloadData()
+        if let text = searchBar.text {
+            if(!text.isEmpty){
+                //reload your data source if necessary
+                searchBar.resignFirstResponder()
+                searchBar.setShowsCancelButton(true, animated: true)
+                NetworkProvider.getArtistByName(artistName: text, page: 1) { apiArtistSearchModel in
+                    
+                    if let loadedArtists = apiArtistSearchModel?.results?.artistmatches?.artist {
+                        self.artists = APIToBusinessModelMapper.mapArtistArray(apiArtistModelArray: loadedArtists)
+                        self.collectionView?.reloadData()
+                    }
+                }
+            }
         }
     }
     
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if(searchText.isEmpty){
-            //reload your data source if necessary
-            self.collectionView?.reloadData()
-        }
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchBar.text? = ""
+        searchBar.setShowsCancelButton(false, animated: true)
+        searchBar.resignFirstResponder()
     }
     
 }

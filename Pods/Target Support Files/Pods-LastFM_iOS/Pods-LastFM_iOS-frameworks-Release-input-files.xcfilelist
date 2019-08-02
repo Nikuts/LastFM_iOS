@@ -1,2 +1,3 @@
 ${PODS_ROOT}/Target Support Files/Pods-LastFM_iOS/Pods-LastFM_iOS-frameworks.sh
 ${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework
+${BUILT_PRODUCTS_DIR}/AlamofireImage/AlamofireImage.framework

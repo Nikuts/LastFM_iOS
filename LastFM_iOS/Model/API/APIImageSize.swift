@@ -14,4 +14,8 @@ enum APIImageSize: String, Codable {
     case medium = "medium"
     case mega = "mega"
     case small = "small"
+    
+    static func indexOf(apiImageSize: APIImageSize) -> Int {
+        return [small, medium, large, extralarge, mega].firstIndex(of: apiImageSize)!
+    }
 }
