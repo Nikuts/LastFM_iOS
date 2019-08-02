@@ -29,7 +29,6 @@ class NetworkProvider {
                     let decoder = JSONDecoder()
                     let apiArtistSearch = try decoder.decode(APIArtistSearchModel.self, from: value)
                     
-                    debugPrint(apiArtistSearch)
                     completion(apiArtistSearch)
                 } catch let error {
                     debugPrint(error)

@@ -73,8 +73,15 @@ class ArtistSearchCollectionViewController: UICollectionViewController, UISearch
     
     // MARK: UICollectionViewDelegate
     
-    override func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+    override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         os_log("Clicked.")
+        guard let fetchedAlbumsVC = storyboard?.instantiateViewController(withIdentifier: String(describing: FetchedAlbumsViewController.self)) else {
+            fatalError("There is no FetchedAlbumsViewController in the storyboard.")
+        }
+        
+        fetchedAlbumsVC.navigationItem.title = artists[indexPath.row].name
+        
+        navigationController?.pushViewController(fetchedAlbumsVC, animated: true)
     }
     
     /*

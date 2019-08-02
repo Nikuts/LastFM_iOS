@@ -23,6 +23,7 @@
 		C204ED8822F4348D00FDA056 /* APIToBusinessModelMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C204ED8722F4348D00FDA056 /* APIToBusinessModelMapper.swift */; };
 		C204ED8A22F48DF900FDA056 /* AlbumsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C204ED8922F48DF900FDA056 /* AlbumsViewController.swift */; };
 		C204ED8C22F4930B00FDA056 /* SavedAlbumsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C204ED8B22F4930A00FDA056 /* SavedAlbumsViewController.swift */; };
+		C204ED8E22F4DC3900FDA056 /* FetchedAlbumsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = C204ED8D22F4DC3900FDA056 /* FetchedAlbumsViewController.swift */; };
 		C220460222EF39EF007FFE08 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C220460122EF39EF007FFE08 /* AppDelegate.swift */; };
 		C220460722EF39EF007FFE08 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C220460522EF39EF007FFE08 /* Main.storyboard */; };
 		C220460922EF39F1007FFE08 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C220460822EF39F1007FFE08 /* Assets.xcassets */; };
@@ -64,6 +65,7 @@
 		C204ED8722F4348D00FDA056 /* APIToBusinessModelMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIToBusinessModelMapper.swift; sourceTree = "<group>"; };
 		C204ED8922F48DF900FDA056 /* AlbumsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumsViewController.swift; sourceTree = "<group>"; };
 		C204ED8B22F4930A00FDA056 /* SavedAlbumsViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SavedAlbumsViewController.swift; sourceTree = "<group>"; };
+		C204ED8D22F4DC3900FDA056 /* FetchedAlbumsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetchedAlbumsViewController.swift; sourceTree = "<group>"; };
 		C22045FE22EF39EF007FFE08 /* LastFM_iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LastFM_iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C220460122EF39EF007FFE08 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C220460622EF39EF007FFE08 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -186,6 +188,7 @@
 				C204ED8B22F4930A00FDA056 /* SavedAlbumsViewController.swift */,
 				C220462F22EF94D0007FFE08 /* ArtistSearchCollectionViewController.swift */,
 				C204ED8922F48DF900FDA056 /* AlbumsViewController.swift */,
+				C204ED8D22F4DC3900FDA056 /* FetchedAlbumsViewController.swift */,
 			);
 			path = ViewController;
 			sourceTree = "<group>";
@@ -436,6 +439,7 @@
 				C204ED8A22F48DF900FDA056 /* AlbumsViewController.swift in Sources */,
 				C202318322F0714000EB632A /* APIOpensearchQueryModel.swift in Sources */,
 				C204ED8822F4348D00FDA056 /* APIToBusinessModelMapper.swift in Sources */,
+				C204ED8E22F4DC3900FDA056 /* FetchedAlbumsViewController.swift in Sources */,
 				C202317522F06E5400EB632A /* APIArtistSearchModel.swift in Sources */,
 				C202318622F0736800EB632A /* APIAttrModel.swift in Sources */,
 				C202317D22F070BB00EB632A /* APIImageModel.swift in Sources */,
