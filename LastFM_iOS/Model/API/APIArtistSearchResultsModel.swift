@@ -12,7 +12,7 @@ struct APIArtistSearchResultsModel : Codable {
     let opensearchQuery: APIOpensearchQueryModel?
     let opensearchTotalResults, opensearchStartIndex, opensearchItemsPerPage: String?
     let artistmatches: APIArtistMatchesModel?
-    let attr: APIAttrModel?
+    let attr: APIArtistSearchAttrModel?
     
     enum CodingKeys: String, CodingKey {
         case opensearchQuery = "opensearch:Query"

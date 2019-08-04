@@ -9,20 +9,18 @@
 import UIKit
 import os.log
 
-private let reuseIdentifier = "Cell"
-
-class ArtistSearchCollectionViewController: UICollectionViewController, UISearchBarDelegate {
+class ArtistSearchCollectionViewController: UICollectionViewController, UISearchBarDelegate, UICollectionViewDataSourcePrefetching {
     
     var artists = [ArtistModel]()
     
+    private let artistCellReuseIdentifier = String(describing: ArtistCollectionViewCell.self)
+    private var currentPage = 1
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
+        collectionView?.prefetchDataSource = self
+        
         createSearchBar()
-
-        self.collectionView!.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
     }
     
     func createSearchBar() {
@@ -34,17 +32,18 @@ class ArtistSearchCollectionViewController: UICollectionViewController, UISearch
         
         self.navigationItem.titleView = searchBar
     }
+
+    //    MARK: UICollectionViewDataSourcePrefetching
     
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using [segue destinationViewController].
-        // Pass the selected object to the new view controller.
+    func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
+        if let lastIndex = indexPaths.last?.row {
+            if (!artists.isEmpty && lastIndex <= artists.count - 10) {
+                os_log("Prefetching time!")
+                
+            }
+        }
     }
-    */
-
+    
     // MARK: UICollectionViewDataSource
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -57,7 +56,7 @@ class ArtistSearchCollectionViewController: UICollectionViewController, UISearch
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: String(describing: ArtistCollectionViewCell.self), for: indexPath) as? ArtistCollectionViewCell else {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: artistCellReuseIdentifier, for: indexPath) as? ArtistCollectionViewCell else {
             fatalError("Cell is not type of ArtistCollectionViewCell")
         }
         
@@ -71,49 +70,22 @@ class ArtistSearchCollectionViewController: UICollectionViewController, UISearch
         return cell
     }
     
-    // MARK: UICollectionViewDelegate
+    // MARK: UICollectionViewDelegate & Navigation
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         os_log("Clicked.")
-        guard let fetchedAlbumsVC = storyboard?.instantiateViewController(withIdentifier: String(describing: FetchedAlbumsViewController.self)) else {
+        guard let fetchedAlbumsVC = storyboard?.instantiateViewController(withIdentifier: String(describing: FetchedAlbumsViewController.self)) as? FetchedAlbumsViewController else {
             fatalError("There is no FetchedAlbumsViewController in the storyboard.")
         }
         
         fetchedAlbumsVC.navigationItem.title = artists[indexPath.row].name
+        fetchedAlbumsVC.artist = artists[indexPath.row]
         
         navigationController?.pushViewController(fetchedAlbumsVC, animated: true)
     }
     
-    /*
-    // Uncomment this method to specify if the specified item should be highlighted during tracking
-    override func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment this method to specify if the specified item should be selected
-    override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
-    override func collectionView(_ collectionView: UICollectionView, shouldShowMenuForItemAt indexPath: IndexPath) -> Bool {
-        return false
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, canPerformAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
-        return false
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
-    
-    }
-    */
-
     //    MARK: UISearchBarDelegate
+    
     func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
         searchBar.setShowsCancelButton(true, animated: true)
         return true
@@ -122,16 +94,14 @@ class ArtistSearchCollectionViewController: UICollectionViewController, UISearch
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         if let text = searchBar.text {
             if(!text.isEmpty){
-                //reload your data source if necessary
+                
+                self.artists.removeAll()
+                self.collectionView?.reloadData()
+                
                 searchBar.resignFirstResponder()
                 searchBar.setShowsCancelButton(true, animated: true)
-                NetworkProvider.getArtistByName(artistName: text, page: 1) { apiArtistSearchModel in
-                    
-                    if let loadedArtists = apiArtistSearchModel?.results?.artistmatches?.artist {
-                        self.artists = APIToBusinessModelMapper.mapArtistArray(apiArtistModelArray: loadedArtists)
-                        self.collectionView?.reloadData()
-                    }
-                }
+                
+                fetchArtists(name: text, page: self.currentPage)
             }
         }
     }
@@ -142,4 +112,16 @@ class ArtistSearchCollectionViewController: UICollectionViewController, UISearch
         searchBar.resignFirstResponder()
     }
     
+    //    MARK: Networking
+    
+    private func fetchArtists(name: String, page: Int) {
+    
+        NetworkProvider.getArtistByName(artistName: name, page: page) { apiArtistSearchModel in
+            
+            if let loadedArtists = apiArtistSearchModel?.results?.artistmatches?.artist {
+                self.artists = APIToBusinessModelMapper.mapArtistArray(apiArtistModelArray: loadedArtists)
+                self.collectionView?.reloadData()
+            }
+        }
+    }
 }

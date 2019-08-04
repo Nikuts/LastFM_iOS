@@ -8,7 +8,7 @@
 
 import Foundation
 
-struct APIAttrModel: Codable {
+struct APIArtistSearchAttrModel: Codable {
     let attrFor: String?
     
     enum CodingKeys: String, CodingKey {

@@ -41,6 +41,33 @@ class NetworkProvider {
         }
     }
     
+    public static func getTopAlbumsByMbid(mbid: String, page: Int, completion: @escaping (APITopAlbumsSearchModel?) -> Void) {
+        let urlString = "\(BASE_URL)?" +
+                            "method=artist.gettopalbums&" +
+                            "mbid=\(mbid)&" +
+                            "api_key=\(API_KEY)&" +
+                            "page=\(page)&" +
+                            "format=\(FORMAT)"
+        
+        AF.request(urlString).responseData { response in
+            switch response.result {
+            case let .success(value):
+                do {
+                    let decoder = JSONDecoder()
+                    let apiTopAlbumsSearch = try decoder.decode(APITopAlbumsSearchModel.self, from: value)
+                    
+                    completion(apiTopAlbumsSearch)
+                } catch let error {
+                    debugPrint(error)
+                    completion(nil)
+                }
+            case let .failure(error):
+                debugPrint(error)
+                completion(nil)
+            }
+        }
+    }
+    
     public static func loadImage(imageUrl: String, completion: @escaping (UIImage?) -> Void) {
         AF.request(imageUrl).responseImage { response in
             switch response.result {

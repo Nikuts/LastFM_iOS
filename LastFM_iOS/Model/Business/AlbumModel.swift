@@ -1,14 +1,15 @@
 //
-//  ArtistModel.swift
+//  AlbumModel.swift
 //  LastFM_iOS
 //
-//  Created by Nikkuts on 31.07.19.
+//  Created by Nikkuts on 03.08.19.
 //  Copyright © 2019 Nikkuts. All rights reserved.
 //
 
 import Foundation
 
-class ArtistModel {
+class AlbumModel {
+    
     let name: String
     let imageUrl: String?
     let mbid: String
