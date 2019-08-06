@@ -95,28 +95,8 @@ class NetworkProvider {
         }
     }
     
-    public static func loadImage(imageUrl: String, completion: @escaping (UIImage?) -> Void) {
-        AF.request(imageUrl).responseImage { response in
-            switch response.result {
-            case .success(_):
-                if let image = UIImage(data: response.data!, scale: 1.0) {
-                    imageCache.add(image, withIdentifier: imageUrl)
-                    completion(image)
-                } else {
-                    completion(nil)
-                }
-            case let .failure(error):
-                debugPrint(error)
-                completion(nil)
-            }
-        }
-    }
-    
     //    MARK: Private constants
     private static let BASE_URL = "http://ws.audioscrobbler.com/2.0/"
     private static let API_KEY = "2b610a43419cab706301a2e2371c348c"
     private static let FORMAT = "json"
-    
-    //    MARK: ImageCache
-    private static let imageCache = AutoPurgingImageCache(memoryCapacity: 111_111_111, preferredMemoryUsageAfterPurge: 90_000_000)
 }
