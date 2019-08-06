@@ -68,6 +68,33 @@ class NetworkProvider {
         }
     }
     
+    public static func getAlbumInfoByMbid(mbid: String, completion: @escaping (APIAlbumInfoResultModel?) -> Void) {
+        
+        let urlString = "\(BASE_URL)?" +
+            "method=album.getinfo&" +
+            "mbid=\(mbid)&" +
+            "api_key=\(API_KEY)&" +
+            "format=\(FORMAT)"
+        
+        AF.request(urlString).responseData { response in
+            switch response.result {
+            case let .success(value):
+                do {
+                    let decoder = JSONDecoder()
+                    let apiAlbumInfoResult = try decoder.decode(APIAlbumInfoResultModel.self, from: value)
+                    
+                    completion(apiAlbumInfoResult)
+                } catch let error {
+                    debugPrint(error)
+                    completion(nil)
+                }
+            case let .failure(error):
+                debugPrint(error)
+                completion(nil)
+            }
+        }
+    }
+    
     public static func loadImage(imageUrl: String, completion: @escaping (UIImage?) -> Void) {
         AF.request(imageUrl).responseImage { response in
             switch response.result {

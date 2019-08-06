@@ -47,4 +47,17 @@ class FetchedAlbumsViewController: AlbumsViewController {
         
         return cell
     }
+    
+    //    MARK: Navigation
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let albumInfoVC = storyboard?.instantiateViewController(withIdentifier: String(describing: AlbumInfoViewController.self)) as? AlbumInfoViewController else {
+            fatalError("There is no \(AlbumInfoViewController.self) in the storyboard.")
+        }
+        
+        albumInfoVC.navigationItem.title = albums[indexPath.row].name
+        albumInfoVC.album = albums[indexPath.row]
+        
+        navigationController?.pushViewController(albumInfoVC, animated: true)
+    }
 }

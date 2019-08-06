@@ -119,6 +119,21 @@
             </objects>
             <point key="canvasLocation" x="900" y="171"/>
         </scene>
+        <!--Album Info View Controller-->
+        <scene sceneID="4Je-sy-9SE">
+            <objects>
+                <viewController storyboardIdentifier="AlbumInfoViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="uHR-zY-Faa" customClass="AlbumInfoViewController" customModule="LastFM_iOS" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="ehJ-9s-FaH">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                        <viewLayoutGuide key="safeArea" id="xJq-2q-w6i"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="SP6-PD-h2b" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1771" y="171"/>
+        </scene>
         <!--View Controller-->
         <scene sceneID="5CJ-XJ-kde">
             <objects>
