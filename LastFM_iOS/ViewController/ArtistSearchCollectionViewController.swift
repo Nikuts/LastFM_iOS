@@ -115,7 +115,7 @@ class ArtistSearchCollectionViewController: UICollectionViewController, UISearch
     
     private func fetchArtists(name: String, page: Int) {
     
-        NetworkProvider.getArtistByName(artistName: name, page: page) { apiArtistSearchModel in
+        NetworkProvider.getArtistByName(artistName: name, page: page) { [unowned self] apiArtistSearchModel in
             
             if let loadedArtists = apiArtistSearchModel?.results?.artistmatches?.artist {
                 self.artists = APIToBusinessModelMapper.mapArtistArray(apiArtistModelArray: loadedArtists)

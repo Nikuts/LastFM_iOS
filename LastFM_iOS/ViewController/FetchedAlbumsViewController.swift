@@ -19,7 +19,7 @@ class FetchedAlbumsViewController: AlbumsViewController {
         super.viewDidLoad()
 
         if (artist != nil) {
-            NetworkProvider.getTopAlbumsByMbid(mbid: self.artist!.mbid, page: self.currentPage) { apiTopAlbumsSearchModel in
+            NetworkProvider.getTopAlbumsByMbid(mbid: self.artist!.mbid, page: self.currentPage) { [unowned self] apiTopAlbumsSearchModel in
                 if let loadedAlbums = apiTopAlbumsSearchModel?.topalbums?.album {
                     self.albums = APIToBusinessModelMapper.mapAlbumArray(apiArtistModelArray: loadedAlbums)
                     self.tableView?.reloadData()

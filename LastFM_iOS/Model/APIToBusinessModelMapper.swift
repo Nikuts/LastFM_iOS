@@ -49,11 +49,17 @@ class APIToBusinessModelMapper {
             let albumMbid       = apiAlbumInfoModel.mbid,
             let apiAlbumTracks  = apiAlbumInfoModel.tracks?.track {
             
+            var albumDescription = apiAlbumInfoModel.wiki?.summary
+            if (albumDescription != nil) {
+                albumDescription = String(albumDescription!.prefix(upTo: albumDescription!.firstIndex(of: "<") ?? albumDescription!.endIndex))
+            }
+            
             return AlbumInfoModel(
-                name:       albumName,
-                imageUrl:   apiAlbumInfoModel.image?[APIImageSize.indexOf(apiImageSize: .extralarge)].text,
-                mbid:       albumMbid,
-                tracks:     mapTracksArray(apiTracksArray: apiAlbumTracks)
+                name:           albumName,
+                imageUrl:       apiAlbumInfoModel.image?[APIImageSize.indexOf(apiImageSize: .extralarge)].text,
+                mbid:           albumMbid,
+                description:    albumDescription,
+                tracks:         mapTracksArray(apiTracksArray: apiAlbumTracks)
             )
         }
         return nil

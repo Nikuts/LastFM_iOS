@@ -13,12 +13,14 @@ class AlbumInfoModel {
     let name: String
     let imageUrl: String?
     let mbid: String
+    let description: String?
     let tracks: [TrackModel]
     
-    init(name: String, imageUrl: String?, mbid: String, tracks: [TrackModel]) {
+    init(name: String, imageUrl: String?, mbid: String, description: String?, tracks: [TrackModel]) {
         self.name = name
         self.imageUrl = imageUrl
         self.mbid = mbid
+        self.description = description
         self.tracks = tracks
     }
 }

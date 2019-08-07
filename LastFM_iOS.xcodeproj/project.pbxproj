@@ -44,6 +44,8 @@
 		C204EDBB22F9A31800FDA056 /* APIWikiModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C204EDBA22F9A31800FDA056 /* APIWikiModel.swift */; };
 		C204EDBD22F9A8FE00FDA056 /* AlbumInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C204EDBC22F9A8FE00FDA056 /* AlbumInfoModel.swift */; };
 		C204EDBF22F9A9A000FDA056 /* TrackModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C204EDBE22F9A9A000FDA056 /* TrackModel.swift */; };
+		C209F8C922F9D6BD00438444 /* AlbumInfoDescriptionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C209F8C822F9D6BD00438444 /* AlbumInfoDescriptionTableViewCell.swift */; };
+		C209F8CD22FB06B000438444 /* AlbumInfoTrackTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C209F8CC22FB06B000438444 /* AlbumInfoTrackTableViewCell.swift */; };
 		C220460222EF39EF007FFE08 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C220460122EF39EF007FFE08 /* AppDelegate.swift */; };
 		C220460722EF39EF007FFE08 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C220460522EF39EF007FFE08 /* Main.storyboard */; };
 		C220460922EF39F1007FFE08 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C220460822EF39F1007FFE08 /* Assets.xcassets */; };
@@ -106,6 +108,8 @@
 		C204EDBA22F9A31800FDA056 /* APIWikiModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIWikiModel.swift; sourceTree = "<group>"; };
 		C204EDBC22F9A8FE00FDA056 /* AlbumInfoModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumInfoModel.swift; sourceTree = "<group>"; };
 		C204EDBE22F9A9A000FDA056 /* TrackModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackModel.swift; sourceTree = "<group>"; };
+		C209F8C822F9D6BD00438444 /* AlbumInfoDescriptionTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumInfoDescriptionTableViewCell.swift; sourceTree = "<group>"; };
+		C209F8CC22FB06B000438444 /* AlbumInfoTrackTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumInfoTrackTableViewCell.swift; sourceTree = "<group>"; };
 		C22045FE22EF39EF007FFE08 /* LastFM_iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LastFM_iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C220460122EF39EF007FFE08 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C220460622EF39EF007FFE08 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -163,9 +167,11 @@
 		C204ED8122F1DA3400FDA056 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				C209F8CC22FB06B000438444 /* AlbumInfoTrackTableViewCell.swift */,
 				C204ED8222F1DA6200FDA056 /* ArtistCollectionViewCell.swift */,
 				C204EDA122F7462600FDA056 /* AlbumTableViewCell.swift */,
 				C204EDA222F7462600FDA056 /* AlbumTableViewCell.xib */,
+				C209F8C822F9D6BD00438444 /* AlbumInfoDescriptionTableViewCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -518,6 +524,7 @@
 				C204EDAF22F9A20F00FDA056 /* APITagsModel.swift in Sources */,
 				C202317922F0707C00EB632A /* APIArtistMatchesModel.swift in Sources */,
 				C204ED8322F1DA6200FDA056 /* ArtistCollectionViewCell.swift in Sources */,
+				C209F8C922F9D6BD00438444 /* AlbumInfoDescriptionTableViewCell.swift in Sources */,
 				C204EDBB22F9A31800FDA056 /* APIWikiModel.swift in Sources */,
 				C202317722F06E8600EB632A /* APIArtistSearchResultsModel.swift in Sources */,
 				C204ED9A22F5D84200FDA056 /* APIAlbumModel.swift in Sources */,
@@ -542,6 +549,7 @@
 				C204EDB522F9A28D00FDA056 /* APITrackModel.swift in Sources */,
 				C204EDB722F9A2E800FDA056 /* APIAlbumInfoAttrModel.swift in Sources */,
 				C202318622F0736800EB632A /* APIArtistSearchAttrModel.swift in Sources */,
+				C209F8CD22FB06B000438444 /* AlbumInfoTrackTableViewCell.swift in Sources */,
 				C204ED9622F5D74300FDA056 /* APITopAlbumsSearchModel.swift in Sources */,
 				C204ED9C22F5D8BC00FDA056 /* APIAlbumArtistModel.swift in Sources */,
 				C202317D22F070BB00EB632A /* APIImageModel.swift in Sources */,
