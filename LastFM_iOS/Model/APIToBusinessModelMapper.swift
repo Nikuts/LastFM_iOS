@@ -55,6 +55,7 @@ class APIToBusinessModelMapper {
             }
             
             return AlbumInfoModel(
+                artistName:     nil,
                 name:           albumName,
                 imageUrl:       apiAlbumInfoModel.image?[APIImageSize.indexOf(apiImageSize: .extralarge)].text,
                 mbid:           albumMbid,

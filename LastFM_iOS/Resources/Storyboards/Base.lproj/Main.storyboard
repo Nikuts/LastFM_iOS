@@ -122,6 +122,7 @@
         <!--Album Info View Controller-->
         <scene sceneID="4Je-sy-9SE">
             <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="SP6-PD-h2b" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController storyboardIdentifier="AlbumInfoViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="uHR-zY-Faa" customClass="AlbumInfoViewController" customModule="LastFM_iOS" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="ehJ-9s-FaH">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
@@ -207,21 +208,26 @@
                                     </tableViewCell>
                                 </prototypes>
                             </tableView>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="dwD-1Q-xNq">
+                                <rect key="frame" x="197" y="438" width="20" height="20"/>
+                            </activityIndicatorView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="dwD-1Q-xNq" firstAttribute="centerY" secondItem="ehJ-9s-FaH" secondAttribute="centerY" id="A4P-jz-H15"/>
                             <constraint firstAttribute="bottom" secondItem="cj8-iM-53J" secondAttribute="bottom" id="N0D-MK-Li4"/>
                             <constraint firstItem="cj8-iM-53J" firstAttribute="top" secondItem="xJq-2q-w6i" secondAttribute="top" id="UPP-YJ-5km"/>
+                            <constraint firstItem="dwD-1Q-xNq" firstAttribute="centerX" secondItem="ehJ-9s-FaH" secondAttribute="centerX" id="age-0a-RyP"/>
                             <constraint firstItem="cj8-iM-53J" firstAttribute="leading" secondItem="ehJ-9s-FaH" secondAttribute="leading" id="qtT-d2-ABC"/>
                             <constraint firstAttribute="trailing" secondItem="cj8-iM-53J" secondAttribute="trailing" id="sBn-JX-MTh"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="xJq-2q-w6i"/>
                     </view>
                     <connections>
+                        <outlet property="activityIndicator" destination="dwD-1Q-xNq" id="d0p-Oh-Ksy"/>
                         <outlet property="tableView" destination="cj8-iM-53J" id="QWW-BJ-zPj"/>
                     </connections>
                 </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="SP6-PD-h2b" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1733" y="171"/>
         </scene>

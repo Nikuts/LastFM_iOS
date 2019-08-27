@@ -15,6 +15,21 @@ class AlbumTableViewCell: UITableViewCell {
     @IBOutlet weak var albumImage: UIImageView!
     @IBOutlet weak var saveButton: UIButton!
     
+    var album: AlbumModel?
+    
+    @IBAction func onSaveClicked(_ sender: UIButton) {
+        if let albumMbid = album?.mbid {
+            NetworkProvider.getAlbumInfoByMbid(mbid: albumMbid) { apiAlbumInfoResultModel in
+                if let apiAlbumInfoModel = apiAlbumInfoResultModel?.album {
+                    if let albumInfoModel = APIToBusinessModelMapper.mapAlbumInfo(apiAlbumInfoModel: apiAlbumInfoModel) {
+                        albumInfoModel.artistName = self.artistName.text
+                        DataBaseManager.saveAlbumInfoModel(albumInfo: albumInfoModel)
+                    }
+                }
+            }
+        }
+        
+    }
     
     override func awakeFromNib() {
         super.awakeFromNib()

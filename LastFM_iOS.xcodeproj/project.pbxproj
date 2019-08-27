@@ -46,6 +46,10 @@
 		C204EDBF22F9A9A000FDA056 /* TrackModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C204EDBE22F9A9A000FDA056 /* TrackModel.swift */; };
 		C209F8C922F9D6BD00438444 /* AlbumInfoDescriptionTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C209F8C822F9D6BD00438444 /* AlbumInfoDescriptionTableViewCell.swift */; };
 		C209F8CD22FB06B000438444 /* AlbumInfoTrackTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = C209F8CC22FB06B000438444 /* AlbumInfoTrackTableViewCell.swift */; };
+		C209F8D22306D28400438444 /* RealmTrackModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C209F8D12306D28400438444 /* RealmTrackModel.swift */; };
+		C209F8D42306D32B00438444 /* RealmAlbumInfoModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C209F8D32306D32A00438444 /* RealmAlbumInfoModel.swift */; };
+		C209F8D6230B251A00438444 /* BusinessDBModelMapper.swift in Sources */ = {isa = PBXBuildFile; fileRef = C209F8D5230B251A00438444 /* BusinessDBModelMapper.swift */; };
+		C209F8D923146C9200438444 /* DataBaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C209F8D823146C9200438444 /* DataBaseManager.swift */; };
 		C220460222EF39EF007FFE08 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C220460122EF39EF007FFE08 /* AppDelegate.swift */; };
 		C220460722EF39EF007FFE08 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = C220460522EF39EF007FFE08 /* Main.storyboard */; };
 		C220460922EF39F1007FFE08 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C220460822EF39F1007FFE08 /* Assets.xcassets */; };
@@ -110,6 +114,10 @@
 		C204EDBE22F9A9A000FDA056 /* TrackModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackModel.swift; sourceTree = "<group>"; };
 		C209F8C822F9D6BD00438444 /* AlbumInfoDescriptionTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlbumInfoDescriptionTableViewCell.swift; sourceTree = "<group>"; };
 		C209F8CC22FB06B000438444 /* AlbumInfoTrackTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlbumInfoTrackTableViewCell.swift; sourceTree = "<group>"; };
+		C209F8D12306D28400438444 /* RealmTrackModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmTrackModel.swift; sourceTree = "<group>"; };
+		C209F8D32306D32A00438444 /* RealmAlbumInfoModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RealmAlbumInfoModel.swift; sourceTree = "<group>"; };
+		C209F8D5230B251A00438444 /* BusinessDBModelMapper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BusinessDBModelMapper.swift; sourceTree = "<group>"; };
+		C209F8D823146C9200438444 /* DataBaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataBaseManager.swift; sourceTree = "<group>"; };
 		C22045FE22EF39EF007FFE08 /* LastFM_iOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LastFM_iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C220460122EF39EF007FFE08 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		C220460622EF39EF007FFE08 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -228,6 +236,23 @@
 			path = AlbumInfo;
 			sourceTree = "<group>";
 		};
+		C209F8CE2306ADA900438444 /* Realm */ = {
+			isa = PBXGroup;
+			children = (
+				C209F8D32306D32A00438444 /* RealmAlbumInfoModel.swift */,
+				C209F8D12306D28400438444 /* RealmTrackModel.swift */,
+			);
+			path = Realm;
+			sourceTree = "<group>";
+		};
+		C209F8D723146C7700438444 /* DB */ = {
+			isa = PBXGroup;
+			children = (
+				C209F8D823146C9200438444 /* DataBaseManager.swift */,
+			);
+			path = DB;
+			sourceTree = "<group>";
+		};
 		C22045F522EF39EF007FFE08 = {
 			isa = PBXGroup;
 			children = (
@@ -251,6 +276,7 @@
 		C220460022EF39EF007FFE08 /* LastFM_iOS */ = {
 			isa = PBXGroup;
 			children = (
+				C209F8D723146C7700438444 /* DB */,
 				C220462622EF7769007FFE08 /* App */,
 				C220462522EF7756007FFE08 /* ViewController */,
 				C220463222F03CB7007FFE08 /* Model */,
@@ -320,9 +346,11 @@
 		C220463222F03CB7007FFE08 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				C209F8CE2306ADA900438444 /* Realm */,
 				C202316522F048BA00EB632A /* API */,
 				C204ED8422F1E1F000FDA056 /* Business */,
 				C204ED8722F4348D00FDA056 /* APIToBusinessModelMapper.swift */,
+				C209F8D5230B251A00438444 /* BusinessDBModelMapper.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -518,13 +546,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C209F8D42306D32B00438444 /* RealmAlbumInfoModel.swift in Sources */,
 				C204ED9E22F5D90900FDA056 /* APITopAlbumsAttrModel.swift in Sources */,
 				C204EDA022F5EBC400FDA056 /* AlbumModel.swift in Sources */,
 				C204EDA622F8539200FDA056 /* AlbumInfoViewController.swift in Sources */,
+				C209F8D923146C9200438444 /* DataBaseManager.swift in Sources */,
 				C204EDAF22F9A20F00FDA056 /* APITagsModel.swift in Sources */,
 				C202317922F0707C00EB632A /* APIArtistMatchesModel.swift in Sources */,
 				C204ED8322F1DA6200FDA056 /* ArtistCollectionViewCell.swift in Sources */,
 				C209F8C922F9D6BD00438444 /* AlbumInfoDescriptionTableViewCell.swift in Sources */,
+				C209F8D22306D28400438444 /* RealmTrackModel.swift in Sources */,
 				C204EDBB22F9A31800FDA056 /* APIWikiModel.swift in Sources */,
 				C202317722F06E8600EB632A /* APIArtistSearchResultsModel.swift in Sources */,
 				C204ED9A22F5D84200FDA056 /* APIAlbumModel.swift in Sources */,
@@ -556,6 +587,7 @@
 				C220460222EF39EF007FFE08 /* AppDelegate.swift in Sources */,
 				C204EDBD22F9A8FE00FDA056 /* AlbumInfoModel.swift in Sources */,
 				C204EDA322F7462600FDA056 /* AlbumTableViewCell.swift in Sources */,
+				C209F8D6230B251A00438444 /* BusinessDBModelMapper.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

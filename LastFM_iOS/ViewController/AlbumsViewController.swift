@@ -8,10 +8,9 @@
 
 import UIKit
 
-class AlbumsViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
-
+class AlbumsViewController: UIViewController, UITableViewDelegate {
+   
     internal var tableView: UITableView!
-    internal var albums = [AlbumModel]()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -20,27 +19,13 @@ class AlbumsViewController: UIViewController, UITableViewDelegate, UITableViewDa
         let displayWidth: CGFloat = self.view.frame.width
         let displayHeight: CGFloat = self.view.frame.height
         
-        tableView = UITableView(frame: CGRect(x: 0, y: barHeight, width: displayWidth, height: displayHeight - barHeight))
-        tableView.dataSource = self
-        tableView.delegate = self
+        self.tableView = UITableView(frame: CGRect(x: 0, y: barHeight, width: displayWidth, height: displayHeight - barHeight))
+        self.tableView.delegate = self
         self.view.addSubview(tableView)
         
         registerCells()
     }
 
-    internal func registerCells() {
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "MyCell")
-    }
+    internal func registerCells() {}
     
-    //    MARK: UITableViewDataSource
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return albums.count
-    }
-    
-    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "MyCell", for: indexPath)
-        
-        return cell
-    }
 }

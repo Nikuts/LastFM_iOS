@@ -8,21 +8,23 @@
 
 import UIKit
 
-class FetchedAlbumsViewController: AlbumsViewController {
+class FetchedAlbumsViewController: AlbumsViewController, UITableViewDataSource {
 
     private let cellId = String(describing: AlbumTableViewCell.self)
+    private var albums = [AlbumModel] ()
     
     var artist: ArtistModel?
     var currentPage = 1
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        self.tableView.dataSource = self
+        
         if (artist != nil) {
-            NetworkProvider.getTopAlbumsByMbid(mbid: self.artist!.mbid, page: self.currentPage) { [unowned self] apiTopAlbumsSearchModel in
+            NetworkProvider.getTopAlbumsByMbid(mbid: self.artist!.mbid, page: self.currentPage) { [weak self] apiTopAlbumsSearchModel in
                 if let loadedAlbums = apiTopAlbumsSearchModel?.topalbums?.album {
-                    self.albums = APIToBusinessModelMapper.mapAlbumArray(apiArtistModelArray: loadedAlbums)
-                    self.tableView?.reloadData()
+                    self?.albums = APIToBusinessModelMapper.mapAlbumArray(apiArtistModelArray: loadedAlbums)
+                    self?.tableView?.reloadData()
                 }
             }
         }
@@ -35,13 +37,19 @@ class FetchedAlbumsViewController: AlbumsViewController {
     
     //    MARK: UITableViewDataSource
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.albums.count
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as? AlbumTableViewCell else {
             fatalError("Cannot deque cell as \(AlbumTableViewCell.self)")
         }
         
-        cell.title.text = albums[indexPath.row].name
-        if let imageUrl = URL.init(string: albums[indexPath.row].imageUrl ?? "") {
+        cell.album = self.albums[indexPath.row]
+        cell.title.text = self.albums[indexPath.row].name
+        cell.artistName.text = self.artist?.name
+        if let imageUrl = URL.init(string: self.albums[indexPath.row].imageUrl ?? "") {
             cell.albumImage.af_setImage(withURL: imageUrl)
         }
         
@@ -55,8 +63,8 @@ class FetchedAlbumsViewController: AlbumsViewController {
             fatalError("There is no \(AlbumInfoViewController.self) in the storyboard.")
         }
         
-        albumInfoVC.navigationItem.title = albums[indexPath.row].name
-        albumInfoVC.album = albums[indexPath.row]
+        albumInfoVC.navigationItem.title = self.albums[indexPath.row].name
+        albumInfoVC.album = self.albums[indexPath.row]
         
         navigationController?.pushViewController(albumInfoVC, animated: true)
     }

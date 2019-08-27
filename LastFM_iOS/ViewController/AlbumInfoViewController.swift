@@ -11,6 +11,7 @@ import UIKit
 class AlbumInfoViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
     var album : AlbumModel?
     var albumInfo : AlbumInfoModel?
@@ -18,16 +19,28 @@ class AlbumInfoViewController: UIViewController, UITableViewDelegate, UITableVie
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        if (self.albumInfo != nil) { // if saved album
+            onFinishLoading()
+            return
+        }
+        
         if (self.album != nil) {
-            NetworkProvider.getAlbumInfoByMbid(mbid: album!.mbid) { [unowned self] apiAlbumInfoResultModel in
+            self.activityIndicator.startAnimating()
+            
+            NetworkProvider.getAlbumInfoByMbid(mbid: album!.mbid) { [weak self] apiAlbumInfoResultModel in
                 if let apiAlbumInfoModel = apiAlbumInfoResultModel?.album {
-                    self.albumInfo = APIToBusinessModelMapper.mapAlbumInfo(apiAlbumInfoModel: apiAlbumInfoModel)
-                    
-                    self.tableView.delegate = self
-                    self.tableView.dataSource = self
+                    self?.albumInfo = APIToBusinessModelMapper.mapAlbumInfo(apiAlbumInfoModel: apiAlbumInfoModel)
+                    self?.onFinishLoading()
                 }
             }
         }
+    }
+    
+    private func onFinishLoading() {
+        self.tableView.delegate = self
+        self.tableView.dataSource = self
+        
+        self.activityIndicator.stopAnimating()
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {

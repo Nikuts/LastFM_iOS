@@ -17,7 +17,7 @@ class NetworkProvider {
        
         let urlString = "\(BASE_URL)?" +
                             "method=artist.search&" +
-                            "artist=\(artistName)&" +
+                            "artist=\(artistName.replacingOccurrences(of: " ", with: "%20"))&" +
                             "api_key=\(API_KEY)&" +
                             "page=\(page)&" +
                             "format=\(FORMAT)"
