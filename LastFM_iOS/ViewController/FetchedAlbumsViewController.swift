@@ -8,9 +8,10 @@
 
 import UIKit
 
-class FetchedAlbumsViewController: AlbumsViewController, UITableViewDataSource {
+class FetchedAlbumsViewController: AlbumsViewController, UITableViewDataSource, AlbumActionsProtocol {
 
-    private let cellId = String(describing: AlbumTableViewCell.self)
+    private let albumCellId = String(describing: AlbumTableViewCell.self)
+    private let loadingCellId = String(describing: LoadingTableViewCell.self)
     private var albums = [AlbumModel] ()
     
     var artist: ArtistModel?
@@ -31,29 +32,50 @@ class FetchedAlbumsViewController: AlbumsViewController, UITableViewDataSource {
     }
     
     override func registerCells() {
-        let nib = UINib.init(nibName: cellId, bundle: nil)
-        self.tableView.register(nib, forCellReuseIdentifier: cellId)
+        let albumNib = UINib.init(nibName: albumCellId, bundle: nil)
+        let loadingNib = UINib.init(nibName: loadingCellId, bundle: nil)
+        
+        self.tableView.register(albumNib, forCellReuseIdentifier: albumCellId)
+        self.tableView.register(loadingNib, forCellReuseIdentifier: loadingCellId)
     }
     
     //    MARK: UITableViewDataSource
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.albums.count
+        return self.albums.count + 1
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as? AlbumTableViewCell else {
-            fatalError("Cannot deque cell as \(AlbumTableViewCell.self)")
+        if (indexPath.row < albums.count) {
+            guard let albumCell = tableView.dequeueReusableCell(withIdentifier: albumCellId, for: indexPath) as? AlbumTableViewCell else {
+                fatalError("Cannot deque cell as \(AlbumTableViewCell.self)")
+            }
+            
+            let currentAlbum = self.albums[indexPath.row]
+            
+            albumCell.album = currentAlbum
+            albumCell.title.text = currentAlbum.name
+            albumCell.artistName.text = self.artist?.name
+            albumCell.isSaved = DataBaseManager.isAlbumSavedByMbid(mbid: currentAlbum.mbid)
+            albumCell.albumActions = self
+            
+            if let imageUrl = URL.init(string: currentAlbum.imageUrl ?? "") {
+                albumCell.albumImage.af_setImage(withURL: imageUrl)
+            }
+            
+            return albumCell
+        } else {
+            guard let loadingCell = tableView.dequeueReusableCell(withIdentifier: loadingCellId, for: indexPath) as? LoadingTableViewCell else {
+                fatalError("Cannot deque cell as \(LoadingTableViewCell.self)")
+            }
+            return loadingCell
         }
-        
-        cell.album = self.albums[indexPath.row]
-        cell.title.text = self.albums[indexPath.row].name
-        cell.artistName.text = self.artist?.name
-        if let imageUrl = URL.init(string: self.albums[indexPath.row].imageUrl ?? "") {
-            cell.albumImage.af_setImage(withURL: imageUrl)
-        }
-        
-        return cell
+    }
+    
+    //    MARK: AlbumActionsProtocol
+    
+    func onDeleteAlbum(mbid: String) {
+        DataBaseManager.deleteAlbumInfoByMbid(mbid: mbid)
     }
     
     //    MARK: Navigation

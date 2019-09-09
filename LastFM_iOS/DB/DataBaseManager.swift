@@ -11,8 +11,14 @@ import RealmSwift
 
 class DataBaseManager {
     
-    static func saveAlbumInfoModel(albumInfo: AlbumInfoModel) {
+    
+    static func saveAlbumInfo(albumInfo: AlbumInfoModel) {
         let realm = try! Realm()
+        
+        if (realm.objects(RealmAlbumInfoModel.self).filter("mbid == %@", albumInfo.mbid).count > 0) {
+            return
+        }
+        
         let realmAlbumInfoModel = BusinessDBModelMapper.albumInfoBusinessToDB(albumInfo: albumInfo)
         try! realm.write {
             realm.add(realmAlbumInfoModel)
@@ -29,4 +35,26 @@ class DataBaseManager {
         return albumInfoModels
     }
     
+    static func deleteAlbumInfo(albumInfo: AlbumInfoModel) {
+        let realm = try! Realm()
+        if let realmAlbumInfoToDelete = realm.objects(RealmAlbumInfoModel.self).filter("mbid == %@", albumInfo.mbid).first {
+            try! realm.write {
+                realm.delete(realmAlbumInfoToDelete)
+            }
+        }
+    }
+    
+    static func deleteAlbumInfoByMbid(mbid: String) {
+        let realm = try! Realm()
+        if let realmAlbumInfoToDelete = realm.objects(RealmAlbumInfoModel.self).filter("mbid == %@", mbid).first {
+            try! realm.write {
+                realm.delete(realmAlbumInfoToDelete)
+            }
+        }
+    }
+    
+    static func isAlbumSavedByMbid(mbid: String) -> Bool {
+        let realm = try! Realm()
+        return realm.objects(RealmAlbumInfoModel.self).filter("mbid == %@", mbid).count > 0
+    }
 }

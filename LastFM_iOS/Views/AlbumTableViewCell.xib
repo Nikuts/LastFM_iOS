@@ -28,16 +28,16 @@
                         </constraints>
                     </imageView>
                     <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="pRz-l4-h8H">
-                        <rect key="frame" x="146" y="48.5" width="102" height="49"/>
+                        <rect key="frame" x="146" y="48.5" width="91" height="49"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Album Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="tgI-no-UHl">
-                                <rect key="frame" x="0.0" y="0.0" width="102" height="20.5"/>
+                                <rect key="frame" x="0.0" y="0.0" width="91" height="20.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Artist Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CRi-6d-Fcz">
-                                <rect key="frame" x="0.0" y="28.5" width="102" height="20.5"/>
+                                <rect key="frame" x="0.0" y="28.5" width="91" height="20.5"/>
                                 <fontDescription key="fontDescription" name=".AppleSystemUIFont" family=".AppleSystemUIFont" pointSize="17"/>
                                 <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                 <nil key="highlightedColor"/>
@@ -48,7 +48,7 @@
                         <rect key="frame" x="264" y="58" width="40" height="30"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="30" id="Ap4-RG-2KL"/>
-                            <constraint firstAttribute="width" constant="40" id="rMx-bg-4aO"/>
+                            <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="40" id="rMx-bg-4aO"/>
                         </constraints>
                         <state key="normal" title="Save"/>
                         <connections>
@@ -60,7 +60,7 @@
                     <constraint firstItem="pRz-l4-h8H" firstAttribute="leading" secondItem="sOh-qY-tFM" secondAttribute="trailing" constant="8" id="5PE-YT-tuB"/>
                     <constraint firstItem="sOh-qY-tFM" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="8" id="Bt7-3w-Vjm"/>
                     <constraint firstItem="iQG-jO-D8E" firstAttribute="centerY" secondItem="sOh-qY-tFM" secondAttribute="centerY" id="cO7-6O-fK8"/>
-                    <constraint firstItem="iQG-jO-D8E" firstAttribute="leading" secondItem="pRz-l4-h8H" secondAttribute="trailing" constant="16" id="hT8-Uz-dwf"/>
+                    <constraint firstItem="iQG-jO-D8E" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="pRz-l4-h8H" secondAttribute="trailing" constant="16" id="hT8-Uz-dwf"/>
                     <constraint firstItem="sOh-qY-tFM" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leading" constant="8" id="ss7-x7-maa"/>
                     <constraint firstItem="pRz-l4-h8H" firstAttribute="centerY" secondItem="sOh-qY-tFM" secondAttribute="centerY" id="vvb-gm-nHy"/>
                     <constraint firstAttribute="trailing" secondItem="iQG-jO-D8E" secondAttribute="trailing" constant="16" id="w7k-tl-hQr"/>
@@ -74,7 +74,7 @@
                 <outlet property="saveButton" destination="iQG-jO-D8E" id="nrM-lQ-nKK"/>
                 <outlet property="title" destination="tgI-no-UHl" id="rRp-fC-kA8"/>
             </connections>
-            <point key="canvasLocation" x="-86.956521739130437" y="48.883928571428569"/>
+            <point key="canvasLocation" x="-428" y="43"/>
         </tableViewCell>
     </objects>
 </document>

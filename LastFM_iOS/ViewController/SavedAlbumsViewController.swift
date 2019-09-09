@@ -9,7 +9,7 @@
 import UIKit
 import RealmSwift
 
-class SavedAlbumsViewController: AlbumsViewController, UITableViewDataSource {
+class SavedAlbumsViewController: AlbumsViewController, UITableViewDataSource, AlbumActionsProtocol {
     
     private let cellId = String(describing: AlbumTableViewCell.self)
     private var albumInfos = [AlbumInfoModel]()
@@ -17,14 +17,7 @@ class SavedAlbumsViewController: AlbumsViewController, UITableViewDataSource {
     override func viewDidAppear(_ animated: Bool) {
         self.tableView.dataSource = self
         
-        let realm = try! Realm()
-        let realmAlbumInfos = realm.objects(RealmAlbumInfoModel.self)
-        albumInfos.removeAll()
-        realmAlbumInfos.forEach { realmAlbumInfo in
-            let albumInfo = BusinessDBModelMapper.albumInfoDBToBusiness(realmAlbumInfo: realmAlbumInfo)
-            albumInfos.append(albumInfo)
-        }
-        
+        albumInfos = DataBaseManager.getAllAlbumInfos()
         self.tableView.reloadData()
     }
     
@@ -34,6 +27,12 @@ class SavedAlbumsViewController: AlbumsViewController, UITableViewDataSource {
     }
     
     //    MARK: UITableViewDataSource
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        if editingStyle == .delete {
+            deleteAlbumInfo(indexPath: indexPath)
+        }
+    }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return albumInfos.count
@@ -46,9 +45,11 @@ class SavedAlbumsViewController: AlbumsViewController, UITableViewDataSource {
         
         let currentAlbumInfo = self.albumInfos[indexPath.row]
         
+        cell.albumActions = self
         cell.album = AlbumModel(name: currentAlbumInfo.name, imageUrl: currentAlbumInfo.imageUrl, mbid: currentAlbumInfo.mbid)
         cell.title.text = currentAlbumInfo.name
         cell.artistName.text = currentAlbumInfo.artistName
+        cell.isSaved = true
         
         if let imageUrl = URL.init(string: currentAlbumInfo.imageUrl ?? "") {
             cell.albumImage.af_setImage(withURL: imageUrl)
@@ -70,4 +71,20 @@ class SavedAlbumsViewController: AlbumsViewController, UITableViewDataSource {
         navigationController?.pushViewController(albumInfoVC, animated: true)
     }
     
+    // MARK: AlbumActionsProtocol
+
+    func onDeleteAlbum(mbid: String) {
+        if let index = self.albumInfos.firstIndex(where: { albumInfo in albumInfo.mbid == mbid }) {
+            deleteAlbumInfo(indexPath: IndexPath(row: index, section: 0))
+        }
+    }
+    
+    //    MARK: Private methods
+    
+    private func deleteAlbumInfo(indexPath: IndexPath) {
+        DataBaseManager.deleteAlbumInfo(albumInfo: self.albumInfos[indexPath.row])
+        self.albumInfos.remove(at: indexPath.row)
+        self.tableView.deleteRows(at: [indexPath], with: .automatic)
+        
+    }
 }
