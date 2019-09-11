@@ -12,6 +12,8 @@ import UIKit
 enum TableCellType: String {
     case Loading = "LoadingTableViewCell"
     case Album = "AlbumTableViewCell"
+    case AlbumInfoDescription = "AlbumInfoDescriptionTableViewCell"
+    case AlbumInfoTrack = "AlbumInfoTrackTableViewCell"
     
     func getType() -> UITableViewCell.Type {
         switch self {
@@ -19,6 +21,10 @@ enum TableCellType: String {
             return LoadingTableViewCell.self
         case .Album:
             return AlbumTableViewCell.self
+        case .AlbumInfoDescription:
+            return AlbumInfoDescriptionTableViewCell.self
+        case .AlbumInfoTrack:
+            return AlbumInfoTrackTableViewCell.self
         }
     }
 }

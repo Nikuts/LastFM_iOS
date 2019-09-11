@@ -228,6 +228,8 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="xJq-2q-w6i"/>
                     </view>
+                    <toolbarItems/>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="activityIndicator" destination="dwD-1Q-xNq" id="d0p-Oh-Ksy"/>
                         <outlet property="tableView" destination="cj8-iM-53J" id="QWW-BJ-zPj"/>

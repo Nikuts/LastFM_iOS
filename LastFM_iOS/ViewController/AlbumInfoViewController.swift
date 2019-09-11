@@ -16,11 +16,20 @@ class AlbumInfoViewController: UIViewController, UITableViewDelegate, UITableVie
     var album : AlbumModel?
     var albumInfo : AlbumInfoModel?
     
+    var items = [BaseTableViewItem<Any>]()
+    var trackIndex = 0
+    
+    let controlToolbarButton = UIBarButtonItem()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        if (self.albumInfo != nil) { // if saved album
-            onFinishLoading()
+        self.initToolbarButton()
+        self.tableView.delegate = self
+        self.tableView.dataSource = self
+        
+        if (isSaved()) { // if saved album
+            setItems()
+            self.activityIndicator.stopAnimating()
             return
         }
         
@@ -30,54 +39,92 @@ class AlbumInfoViewController: UIViewController, UITableViewDelegate, UITableVie
             NetworkProvider.getAlbumInfoByMbid(mbid: album!.mbid) { [weak self] apiAlbumInfoResultModel in
                 if let apiAlbumInfoModel = apiAlbumInfoResultModel?.album {
                     self?.albumInfo = APIToBusinessModelMapper.mapAlbumInfo(apiAlbumInfoModel: apiAlbumInfoModel)
-                    self?.onFinishLoading()
+                    self?.setItems()
+                     self?.activityIndicator.stopAnimating()
                 }
             }
         }
     }
     
-    private func onFinishLoading() {
-        self.tableView.delegate = self
-        self.tableView.dataSource = self
-        
-        self.activityIndicator.stopAnimating()
-    }
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return (albumInfo?.tracks.count ?? 0)
+        return items.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if (indexPath.row == 0) {
-            return createDescriptionCell(indexPath: indexPath)
-        } else {
-            return createTrackCell(indexPath: indexPath, trackIndex: indexPath.row - 1)
-        }
-    }
-
-    private func createDescriptionCell(indexPath: IndexPath) -> UITableViewCell {
-        guard let descriptionCell = tableView.dequeueReusableCell(withIdentifier: String(describing: AlbumInfoDescriptionTableViewCell.self), for: indexPath) as? AlbumInfoDescriptionTableViewCell else {
-            fatalError("Can't deque cell with type \(AlbumInfoDescriptionTableViewCell.self)")
+        let currentItem = self.items[indexPath.row]
+        
+        let cell = tableView.dequeueReusableCell(withIdentifier: currentItem.cellType.rawValue, for: indexPath)
+        
+        if let descriptionCell = cell as? AlbumInfoDescriptionTableViewCell {
+            self.initDescriptionCell(descriptionCell: descriptionCell)
+        } else if let trackCell = cell as? AlbumInfoTrackTableViewCell {
+            self.initTrackCell(trackCell: trackCell, track: currentItem.value as! TrackModel)
         }
         
+        return cell
+    }
+
+    private func initDescriptionCell(descriptionCell: AlbumInfoDescriptionTableViewCell) {
         if let imageUrl = URL(string: self.albumInfo?.imageUrl ?? "") {
             descriptionCell.albumImage.af_setImage(withURL: imageUrl)
         }
         descriptionCell.albumDescription.text = albumInfo?.description
         descriptionCell.albumDescription.numberOfLines = 0
         descriptionCell.albumDescription.sizeToFit()
-        
-        return descriptionCell
     }
     
-    private func createTrackCell(indexPath: IndexPath, trackIndex: Int) -> UITableViewCell {
-        guard let trackCell = tableView.dequeueReusableCell(withIdentifier: String(describing: AlbumInfoTrackTableViewCell.self), for: indexPath) as? AlbumInfoTrackTableViewCell else {
-            fatalError("Can't deque cell with type \(AlbumInfoTrackTableViewCell.self)")
-        }
-        trackCell.trackName.text = "\(trackIndex + 1) \(albumInfo?.tracks[trackIndex].name ?? "")"
-        trackCell.trackDuration.text = albumInfo?.tracks[trackIndex].duration
-        
-        return trackCell
+    private func initTrackCell(trackCell: AlbumInfoTrackTableViewCell, track: TrackModel) {
+        trackCell.trackName.text = "\(track.name)"
+        trackCell.trackDuration.text = track.duration
     }
-
+    
+    private func isSaved() -> Bool {
+        return albumInfo != nil
+    }
+    
+    private func setItems() {
+        self.items.removeAll()
+        self.items.append(BaseTableViewItem(value: albumInfo, cellId: .AlbumInfoDescription))
+        albumInfo?.tracks.forEach { track in
+            self.items.append(BaseTableViewItem(value: track, cellId: .AlbumInfoTrack))
+        }
+        trackIndex = 0
+        self.tableView.reloadData()
+    }
+    
+    private func initToolbarButton() {
+        updateToolbarButtonTitle()
+        self.controlToolbarButton.action = #selector(saveOrDeleteAlbum(sender:))
+        self.controlToolbarButton.target = self
+        self.navigationItem.rightBarButtonItem = self.controlToolbarButton
+    }
+    
+    private func updateToolbarButtonTitle() {
+        if (isSaved()) {
+            self.controlToolbarButton.title = "Delete"
+        } else {
+            self.controlToolbarButton.title = "Save"
+        }
+    }
+    
+    @objc private func saveOrDeleteAlbum(sender: UIBarButtonItem) {
+        if (isSaved()) {
+            if let albumInfo = self.albumInfo {
+                DataBaseManager.deleteAlbumInfoByMbid(mbid: albumInfo.mbid)
+                self.albumInfo = nil
+            }
+        } else {
+            if let album = self.album {
+                NetworkProvider.getAlbumInfoByMbid(mbid: album.mbid) { [weak self] apiAlbumInfoResult in
+                    if let apiAlbumInfo = apiAlbumInfoResult?.album {
+                        if let albumInfo = APIToBusinessModelMapper.mapAlbumInfo(apiAlbumInfoModel: apiAlbumInfo) {
+                            DataBaseManager.saveAlbumInfo(albumInfo: albumInfo)
+                            self?.album = nil
+                        }
+                    }
+                }
+            }
+        }
+        updateToolbarButtonTitle()
+    }
 }
