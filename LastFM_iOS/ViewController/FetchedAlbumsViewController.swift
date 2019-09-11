@@ -12,20 +12,24 @@ class FetchedAlbumsViewController: AlbumsViewController, UITableViewDataSource, 
 
     private let albumCellId = String(describing: AlbumTableViewCell.self)
     private let loadingCellId = String(describing: LoadingTableViewCell.self)
-    private var albums = [AlbumModel] ()
+    private var items = [BaseTableViewItem<AlbumModel>] ()
     
     var artist: ArtistModel?
     var currentPage = 1
+    var loadingCellIndex = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.dataSource = self
         
         if (artist != nil) {
+            enableLoadingCell(enable: true)
             NetworkProvider.getTopAlbumsByMbid(mbid: self.artist!.mbid, page: self.currentPage) { [weak self] apiTopAlbumsSearchModel in
                 if let loadedAlbums = apiTopAlbumsSearchModel?.topalbums?.album {
-                    self?.albums = APIToBusinessModelMapper.mapAlbumArray(apiArtistModelArray: loadedAlbums)
-                    self?.tableView?.reloadData()
+                    APIToBusinessModelMapper.mapAlbumArray(apiArtistModelArray: loadedAlbums).forEach { albumModel in
+                        self?.items.append(BaseTableViewItem<AlbumModel>(value: albumModel, cellId: .Album))
+                    }
+                    self?.enableLoadingCell(enable: false)
                 }
             }
         }
@@ -42,16 +46,14 @@ class FetchedAlbumsViewController: AlbumsViewController, UITableViewDataSource, 
     //    MARK: UITableViewDataSource
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.albums.count + 1
+        return self.items.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if (indexPath.row < albums.count) {
-            guard let albumCell = tableView.dequeueReusableCell(withIdentifier: albumCellId, for: indexPath) as? AlbumTableViewCell else {
-                fatalError("Cannot deque cell as \(AlbumTableViewCell.self)")
-            }
-            
-            let currentAlbum = self.albums[indexPath.row]
+        let currentItem = items[indexPath.row]
+        let cell = tableView.dequeueReusableCell(withIdentifier: currentItem.cellType.rawValue, for: indexPath)
+        
+        if let albumCell = cell as? AlbumTableViewCell, let currentAlbum = currentItem.value {
             
             albumCell.album = currentAlbum
             albumCell.title.text = currentAlbum.name
@@ -62,14 +64,9 @@ class FetchedAlbumsViewController: AlbumsViewController, UITableViewDataSource, 
             if let imageUrl = URL.init(string: currentAlbum.imageUrl ?? "") {
                 albumCell.albumImage.af_setImage(withURL: imageUrl)
             }
-            
-            return albumCell
-        } else {
-            guard let loadingCell = tableView.dequeueReusableCell(withIdentifier: loadingCellId, for: indexPath) as? LoadingTableViewCell else {
-                fatalError("Cannot deque cell as \(LoadingTableViewCell.self)")
-            }
-            return loadingCell
         }
+            
+        return cell
     }
     
     //    MARK: AlbumActionsProtocol
@@ -85,9 +82,27 @@ class FetchedAlbumsViewController: AlbumsViewController, UITableViewDataSource, 
             fatalError("There is no \(AlbumInfoViewController.self) in the storyboard.")
         }
         
-        albumInfoVC.navigationItem.title = self.albums[indexPath.row].name
-        albumInfoVC.album = self.albums[indexPath.row]
+        if let currentAlbum = items[indexPath.row].value {
+            albumInfoVC.navigationItem.title = currentAlbum.name
+            albumInfoVC.album = currentAlbum
+        }
         
         navigationController?.pushViewController(albumInfoVC, animated: true)
+    }
+    
+    // MARK: Private methods
+    
+    private func enableLoadingCell(enable: Bool) {
+        if (enable && !isLoadingAdded()) {
+            self.items.append(BaseTableViewItem(value: nil, cellId: .Loading))
+            self.tableView.reloadData()
+        } else if (!enable && isLoadingAdded()) {
+            self.items.removeAll(where: {item in item.cellType == .Loading})
+            self.tableView.reloadData()
+        }
+    }
+    
+    private func isLoadingAdded() -> Bool {
+        return self.items.first(where: {item in item.cellType == .Loading}) != nil
     }
 }

@@ -9,18 +9,27 @@
 import UIKit
 import os.log
 
-class ArtistSearchCollectionViewController: UICollectionViewController, UISearchBarDelegate, UICollectionViewDataSourcePrefetching {
+class ArtistSearchCollectionViewController: UICollectionViewController, UISearchBarDelegate, UICollectionViewDataSourcePrefetching, UICollectionViewDelegateFlowLayout {
     
-    var artists = [ArtistModel]()
+    private var items = [BaseCollectionViewItem<ArtistModel>]()
     
-    private let artistCellReuseIdentifier = String(describing: ArtistCollectionViewCell.self)
+    private let defaultSize = CGSize(width: 130, height: 180)
+    
+    private let numberOfSections = 1
+    
     private var currentPage = 1
+    
+    private var loadingItemIndex = 0
+    
+    override func viewWillAppear(_ animated: Bool) {
+        createSearchBar()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        collectionView?.prefetchDataSource = self
+        self.collectionView.prefetchDataSource = self
         
-        createSearchBar()
+        self.collectionView.register(UINib(nibName: CollectionCellType.Loading.rawValue, bundle: nil), forCellWithReuseIdentifier: CollectionCellType.Loading.rawValue)
     }
     
     func createSearchBar() {
@@ -37,7 +46,7 @@ class ArtistSearchCollectionViewController: UICollectionViewController, UISearch
     
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         if let lastIndex = indexPaths.last?.row {
-            if (!artists.isEmpty && lastIndex <= artists.count - 10) {
+            if (!items.isEmpty && lastIndex <= items.count - 10) {
                 os_log("Prefetching time!")
                 
             }
@@ -47,27 +56,43 @@ class ArtistSearchCollectionViewController: UICollectionViewController, UISearch
     // MARK: UICollectionViewDataSource
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
+        return self.numberOfSections
     }
 
 
     override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return artists.count
+        return items.count
     }
 
     override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: artistCellReuseIdentifier, for: indexPath) as? ArtistCollectionViewCell else {
-            fatalError("Cell is not type of ArtistCollectionViewCell")
+        
+        let currentItem = self.items[indexPath.row]
+        
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: currentItem.cellType.rawValue, for: indexPath)
+        
+        if let artistCell = cell as? ArtistCollectionViewCell {
+            if let imageUrl = URL.init(string: currentItem.value?.imageUrl ?? "") {
+                artistCell.image.af_setImage(withURL: imageUrl)
+            }
+            
+            artistCell.name.text = currentItem.value?.name
         }
         
-        let artist = artists[indexPath.row]
-        if let imageUrl = URL.init(string: artist.imageUrl ?? "") {
-            cell.image.af_setImage(withURL: imageUrl)
+        if let loadingCell = cell as? LoadingCollectionViewCell {
+            loadingCell.widthAnchor.constraint(equalToConstant: self.view.frame.width).isActive = true
         }
-        
-        cell.name.text = artist.name
     
         return cell
+    }
+    
+    // MARK: UICollectionViewDelegateFlowLayout
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        if (items[indexPath.row].cellType == .Loading) {
+            return CGSize(width: UIScreen.main.bounds.size.width, height: 40)
+        } else {
+            return defaultSize
+        }
     }
     
     // MARK: UICollectionViewDelegate & Navigation
@@ -76,9 +101,10 @@ class ArtistSearchCollectionViewController: UICollectionViewController, UISearch
         guard let fetchedAlbumsVC = storyboard?.instantiateViewController(withIdentifier: String(describing: FetchedAlbumsViewController.self)) as? FetchedAlbumsViewController else {
             fatalError("There is no FetchedAlbumsViewController in the storyboard.")
         }
-        
-        fetchedAlbumsVC.navigationItem.title = artists[indexPath.row].name
-        fetchedAlbumsVC.artist = artists[indexPath.row]
+        if let currentArtist = items[indexPath.row].value {
+            fetchedAlbumsVC.navigationItem.title = currentArtist.name
+            fetchedAlbumsVC.artist = currentArtist
+        }
         
         navigationController?.pushViewController(fetchedAlbumsVC, animated: true)
     }
@@ -94,8 +120,10 @@ class ArtistSearchCollectionViewController: UICollectionViewController, UISearch
         if let text = searchBar.text {
             if(!text.isEmpty){
                 
-                self.artists.removeAll()
+                self.items.removeAll()
                 self.collectionView?.reloadData()
+                
+                enableLoadingCell(enable: true)
                 
                 searchBar.resignFirstResponder()
                 searchBar.setShowsCancelButton(true, animated: true)
@@ -118,9 +146,25 @@ class ArtistSearchCollectionViewController: UICollectionViewController, UISearch
         NetworkProvider.getArtistByName(artistName: name, page: page) { [weak self] apiArtistSearchModel in
             
             if let loadedArtists = apiArtistSearchModel?.results?.artistmatches?.artist {
-                self?.artists = APIToBusinessModelMapper.mapArtistArray(apiArtistModelArray: loadedArtists)
-                self?.collectionView?.reloadData()
+                APIToBusinessModelMapper.mapArtistArray(apiArtistModelArray: loadedArtists).forEach { artistModel in
+                    self?.items.append(BaseCollectionViewItem<ArtistModel>(value: artistModel, cellId: .Artist))
+                }
+                self?.enableLoadingCell(enable: false)
             }
         }
+    }
+    
+    private func enableLoadingCell(enable: Bool) {
+        if (enable && !isLoadingAdded()) {
+            self.items.append(BaseCollectionViewItem(value: nil, cellId: .Loading))
+            self.collectionView.reloadData()
+        } else if (!enable && isLoadingAdded()) {
+            self.items.removeAll(where: {item in item.cellType == .Loading})
+            self.collectionView.reloadData()
+        }
+    }
+    
+    private func isLoadingAdded() -> Bool {
+        return self.items.first(where: {item in item.cellType == .Loading}) != nil
     }
 }

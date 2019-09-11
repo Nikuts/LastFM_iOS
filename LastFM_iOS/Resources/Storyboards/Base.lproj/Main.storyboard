@@ -71,7 +71,7 @@
                                     <rect key="frame" x="0.0" y="0.0" width="130" height="180"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
-                                        <imageView clipsSubviews="YES" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="t56-IV-pGw">
+                                        <imageView clipsSubviews="YES" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="t56-IV-pGw">
                                             <rect key="frame" x="0.0" y="0.0" width="130" height="130"/>
                                             <constraints>
                                                 <constraint firstAttribute="height" constant="130" id="Itd-6T-eYA"/>
@@ -88,6 +88,10 @@
                                         </label>
                                     </subviews>
                                 </view>
+                                <constraints>
+                                    <constraint firstItem="t56-IV-pGw" firstAttribute="leading" secondItem="GWM-28-2dC" secondAttribute="leading" id="Rgg-lp-niv"/>
+                                    <constraint firstItem="t56-IV-pGw" firstAttribute="top" secondItem="GWM-28-2dC" secondAttribute="top" id="dFg-Qg-yRb"/>
+                                </constraints>
                                 <connections>
                                     <outlet property="image" destination="t56-IV-pGw" id="kEQ-JJ-aI0"/>
                                     <outlet property="name" destination="Pbq-op-Xfh" id="l4c-8G-1dF"/>
@@ -122,7 +126,6 @@
         <!--Album Info View Controller-->
         <scene sceneID="4Je-sy-9SE">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="SP6-PD-h2b" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController storyboardIdentifier="AlbumInfoViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="uHR-zY-Faa" customClass="AlbumInfoViewController" customModule="LastFM_iOS" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="ehJ-9s-FaH">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
@@ -214,7 +217,9 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <constraints>
+                            <constraint firstItem="dwD-1Q-xNq" firstAttribute="centerX" secondItem="ehJ-9s-FaH" secondAttribute="centerX" id="1o4-O7-ggp"/>
                             <constraint firstItem="dwD-1Q-xNq" firstAttribute="centerY" secondItem="ehJ-9s-FaH" secondAttribute="centerY" id="A4P-jz-H15"/>
+                            <constraint firstItem="dwD-1Q-xNq" firstAttribute="centerY" secondItem="ehJ-9s-FaH" secondAttribute="centerY" id="Ikp-6M-CWs"/>
                             <constraint firstAttribute="bottom" secondItem="cj8-iM-53J" secondAttribute="bottom" id="N0D-MK-Li4"/>
                             <constraint firstItem="cj8-iM-53J" firstAttribute="top" secondItem="xJq-2q-w6i" secondAttribute="top" id="UPP-YJ-5km"/>
                             <constraint firstItem="dwD-1Q-xNq" firstAttribute="centerX" secondItem="ehJ-9s-FaH" secondAttribute="centerX" id="age-0a-RyP"/>
@@ -228,6 +233,7 @@
                         <outlet property="tableView" destination="cj8-iM-53J" id="QWW-BJ-zPj"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="SP6-PD-h2b" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1733" y="171"/>
         </scene>

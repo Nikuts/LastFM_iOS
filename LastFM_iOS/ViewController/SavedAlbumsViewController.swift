@@ -11,19 +11,31 @@ import RealmSwift
 
 class SavedAlbumsViewController: AlbumsViewController, UITableViewDataSource, AlbumActionsProtocol {
     
-    private let cellId = String(describing: AlbumTableViewCell.self)
-    private var albumInfos = [AlbumInfoModel]()
+    private let albumCellId = TableCellType.Album.rawValue
+    private let loadingCellId = TableCellType.Loading.rawValue
+    
+    private var items = [BaseTableViewItem<AlbumInfoModel>]()
     
     override func viewDidAppear(_ animated: Bool) {
         self.tableView.dataSource = self
+        items.removeAll()
         
-        albumInfos = DataBaseManager.getAllAlbumInfos()
+        self.items.append(BaseTableViewItem(value: nil, cellId: .Loading))
+        self.tableView.reloadData()
+        
+        DataBaseManager.getAllAlbumInfos().forEach { albumInfo in
+            self.items.append(BaseTableViewItem(value: albumInfo, cellId: .Album))
+        }
+        self.items.remove(at: 0)
         self.tableView.reloadData()
     }
     
     override func registerCells() {
-        let nib = UINib.init(nibName: cellId, bundle: nil)
-        self.tableView.register(nib, forCellReuseIdentifier: self.cellId)
+        let albumNib = UINib.init(nibName: albumCellId, bundle: nil)
+        let loadingNib = UINib.init(nibName: loadingCellId, bundle: nil)
+        
+        self.tableView.register(albumNib, forCellReuseIdentifier: albumCellId)
+        self.tableView.register(loadingNib, forCellReuseIdentifier: loadingCellId)
     }
     
     //    MARK: UITableViewDataSource
@@ -35,24 +47,26 @@ class SavedAlbumsViewController: AlbumsViewController, UITableViewDataSource, Al
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return albumInfos.count
+        return items.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: cellId, for: indexPath) as? AlbumTableViewCell else {
-            fatalError("Cannot deque cell as \(AlbumTableViewCell.self)")
-        }
         
-        let currentAlbumInfo = self.albumInfos[indexPath.row]
+        let currentItem = items[indexPath.row]
         
-        cell.albumActions = self
-        cell.album = AlbumModel(name: currentAlbumInfo.name, imageUrl: currentAlbumInfo.imageUrl, mbid: currentAlbumInfo.mbid)
-        cell.title.text = currentAlbumInfo.name
-        cell.artistName.text = currentAlbumInfo.artistName
-        cell.isSaved = true
+        let cell = tableView.dequeueReusableCell(withIdentifier: currentItem.cellType.rawValue, for: indexPath)
         
-        if let imageUrl = URL.init(string: currentAlbumInfo.imageUrl ?? "") {
-            cell.albumImage.af_setImage(withURL: imageUrl)
+        if let currentAlbumInfo = self.items[indexPath.row].value, let albumCell = cell as? AlbumTableViewCell {
+        
+            albumCell.albumActions = self
+            albumCell.album = AlbumModel(name: currentAlbumInfo.name, imageUrl: currentAlbumInfo.imageUrl, mbid: currentAlbumInfo.mbid)
+            albumCell.title.text = currentAlbumInfo.name
+            albumCell.artistName.text = currentAlbumInfo.artistName
+            albumCell.isSaved = true
+            
+            if let imageUrl = URL.init(string: currentAlbumInfo.imageUrl ?? "") {
+                albumCell.albumImage.af_setImage(withURL: imageUrl)
+            }
         }
         
         return cell
@@ -64,17 +78,17 @@ class SavedAlbumsViewController: AlbumsViewController, UITableViewDataSource, Al
         guard let albumInfoVC = storyboard?.instantiateViewController(withIdentifier: String(describing: AlbumInfoViewController.self)) as? AlbumInfoViewController else {
             fatalError("There is no \(AlbumInfoViewController.self) in the storyboard.")
         }
-        
-        albumInfoVC.navigationItem.title = self.albumInfos[indexPath.row].name
-        albumInfoVC.albumInfo = self.albumInfos[indexPath.row]
-        
+        if let currentAlbumInfo = self.items[indexPath.row].value {
+            albumInfoVC.navigationItem.title = currentAlbumInfo.name
+            albumInfoVC.albumInfo = currentAlbumInfo
+        }
         navigationController?.pushViewController(albumInfoVC, animated: true)
     }
     
     // MARK: AlbumActionsProtocol
 
     func onDeleteAlbum(mbid: String) {
-        if let index = self.albumInfos.firstIndex(where: { albumInfo in albumInfo.mbid == mbid }) {
+        if let index = self.items.firstIndex(where: { item in item.value?.mbid == mbid }) {
             deleteAlbumInfo(indexPath: IndexPath(row: index, section: 0))
         }
     }
@@ -82,9 +96,10 @@ class SavedAlbumsViewController: AlbumsViewController, UITableViewDataSource, Al
     //    MARK: Private methods
     
     private func deleteAlbumInfo(indexPath: IndexPath) {
-        DataBaseManager.deleteAlbumInfo(albumInfo: self.albumInfos[indexPath.row])
-        self.albumInfos.remove(at: indexPath.row)
-        self.tableView.deleteRows(at: [indexPath], with: .automatic)
-        
+        if let currentAlbumInfo = self.items[indexPath.row].value {
+            DataBaseManager.deleteAlbumInfo(albumInfo: currentAlbumInfo)
+            self.items.remove(at: indexPath.row)
+            self.tableView.deleteRows(at: [indexPath], with: .automatic)
+        }
     }
 }
