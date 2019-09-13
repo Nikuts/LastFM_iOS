@@ -3,6 +3,14 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "FetchedAlbumsViewController.tableView(_:prefetchRowsAt:):FetchedAlbumsViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "items.count - 10">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "AlbumTableViewCell.isSaved.didset:AlbumTableViewCell.swift">
          <PersistentStrings>
             <PersistentString

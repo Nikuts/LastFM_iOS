@@ -21,11 +21,19 @@ class AlbumsViewController: UIViewController, UITableViewDelegate {
         
         self.tableView = UITableView(frame: CGRect(x: 0, y: barHeight, width: displayWidth, height: displayHeight - barHeight))
         self.tableView.delegate = self
+        self.tableView.estimatedRowHeight = DEFAULT_ROW_HEIGHT
         self.view.addSubview(tableView)
         
         registerCells()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        if let indexPath = tableView.indexPathForSelectedRow {
+            self.tableView.deselectRow(at: indexPath, animated: true)
+        }
+    }
+    
     internal func registerCells() {}
     
+    private let DEFAULT_ROW_HEIGHT: CGFloat = 150
 }

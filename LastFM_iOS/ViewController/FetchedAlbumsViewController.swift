@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import os
 
-class FetchedAlbumsViewController: AlbumsViewController, UITableViewDataSource, AlbumActionsProtocol {
+class FetchedAlbumsViewController: AlbumsViewController, UITableViewDataSource, AlbumActionsProtocol, UITableViewDataSourcePrefetching {
 
     private let albumCellId = String(describing: AlbumTableViewCell.self)
     private let loadingCellId = String(describing: LoadingTableViewCell.self)
@@ -16,23 +17,16 @@ class FetchedAlbumsViewController: AlbumsViewController, UITableViewDataSource, 
     
     var artist: ArtistModel?
     var currentPage = 1
+    var maxPages = 1
     var loadingCellIndex = 0
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.tableView.dataSource = self
+        self.tableView.prefetchDataSource = self
+        items.removeAll()
         
-        if (artist != nil) {
-            enableLoadingCell(enable: true)
-            NetworkProvider.getTopAlbumsByMbid(mbid: self.artist!.mbid, page: self.currentPage) { [weak self] apiTopAlbumsSearchModel in
-                if let loadedAlbums = apiTopAlbumsSearchModel?.topalbums?.album {
-                    APIToBusinessModelMapper.mapAlbumArray(apiArtistModelArray: loadedAlbums).forEach { albumModel in
-                        self?.items.append(BaseTableViewItem<AlbumModel>(value: albumModel, cellId: .Album))
-                    }
-                    self?.enableLoadingCell(enable: false)
-                }
-            }
-        }
+        loadAlbums()
     }
     
     override func registerCells() {
@@ -69,6 +63,18 @@ class FetchedAlbumsViewController: AlbumsViewController, UITableViewDataSource, 
         return cell
     }
     
+    // MARK: UITableViewDataSourcePrefetching
+    
+    func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
+        if let lastIndex = indexPaths.last?.row {
+            if (!items.isEmpty && lastIndex >= items.count - 5 && !isLoadingAdded() && currentPage < maxPages) {
+                os_log("Prefetching time")
+                self.currentPage += 1
+                loadAlbums()
+            }
+        }
+    }
+    
     //    MARK: AlbumActionsProtocol
     
     func onDeleteAlbum(mbid: String) {
@@ -94,15 +100,51 @@ class FetchedAlbumsViewController: AlbumsViewController, UITableViewDataSource, 
     
     private func enableLoadingCell(enable: Bool) {
         if (enable && !isLoadingAdded()) {
+            self.tableView.beginUpdates()
             self.items.append(BaseTableViewItem(value: nil, cellId: .Loading))
-            self.tableView.reloadData()
+            self.tableView.insertRows(at: [IndexPath(row: self.items.count - 1, section: 0)], with: .none)
+            self.tableView.endUpdates()
         } else if (!enable && isLoadingAdded()) {
-            self.items.removeAll(where: {item in item.cellType == .Loading})
-            self.tableView.reloadData()
+            
+            if let loadingIndex = self.items.firstIndex(where: {item in item.cellType == .Loading}) {
+                self.tableView.beginUpdates()
+                self.items.remove(at: loadingIndex)
+                self.tableView.deleteRows(at: [IndexPath(row: loadingIndex, section: 0)], with: .none)
+                self.tableView.endUpdates()
+            }
+            
         }
     }
     
     private func isLoadingAdded() -> Bool {
         return self.items.first(where: {item in item.cellType == .Loading}) != nil
+    }
+    
+    private func loadAlbums() {
+        if (artist != nil) {
+            enableLoadingCell(enable: true)
+            NetworkProvider.getTopAlbumsByMbid(mbid: self.artist!.mbid, page: self.currentPage) { [weak self] apiTopAlbumsSearchModel in
+                if let totalPages = Int(apiTopAlbumsSearchModel?.topalbums?.attr?.totalPages ?? "") {
+                    self?.maxPages = totalPages
+                }
+                if let loadedAlbums = apiTopAlbumsSearchModel?.topalbums?.album {
+                    self?.onAlbumsLoaded(albums: APIToBusinessModelMapper.mapAlbumArray(apiArtistModelArray: loadedAlbums))
+                    self?.enableLoadingCell(enable: false)
+                }
+            }
+        }
+    }
+    
+    private func onAlbumsLoaded(albums: [AlbumModel]) {
+        let startRow = items.count - 1
+        let endRow = startRow + albums.count
+        albums.forEach { album in
+            self.items.append(BaseTableViewItem(value: album, cellId: .Album))
+            
+        }
+        let indexPathsToInsert = (startRow..<endRow).map { IndexPath(row: $0, section: 0) }
+        self.tableView.beginUpdates()
+        self.tableView.insertRows(at: indexPathsToInsert, with: .automatic)
+        self.tableView.endUpdates()
     }
 }
