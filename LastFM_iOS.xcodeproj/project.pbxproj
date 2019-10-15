@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		30DB611B3C0520E989BB2A41 /* Pods_LastFM_iOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2233F1794FD7C7E7583C223A /* Pods_LastFM_iOS.framework */; };
 		902F91C5E4D35E484D6646F2 /* Pods_LastFM_iOSTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 18414DD2EFB2F9AA04B33853 /* Pods_LastFM_iOSTests.framework */; };
-		C202316422F0483000EB632A /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = C202316322F0483000EB632A /* Info.plist */; };
 		C202317522F06E5400EB632A /* APIArtistSearchModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C202317422F06E5400EB632A /* APIArtistSearchModel.swift */; };
 		C202317722F06E8600EB632A /* APIArtistSearchResultsModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C202317622F06E8600EB632A /* APIArtistSearchResultsModel.swift */; };
 		C202317922F0707C00EB632A /* APIArtistMatchesModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C202317822F0707C00EB632A /* APIArtistMatchesModel.swift */; };
@@ -467,7 +466,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1030;
-				LastUpgradeCheck = 1030;
+				LastUpgradeCheck = 1100;
 				ORGANIZATIONNAME = Nikkuts;
 				TargetAttributes = {
 					C22045FD22EF39EF007FFE08 = {
@@ -516,7 +515,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				C202316422F0483000EB632A /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

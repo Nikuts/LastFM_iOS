@@ -14,7 +14,8 @@ struct APIAlbumInfoModel: Codable {
     let mbid: String?
     let url: String?
     let image: [APIImageModel]?
-    let listeners, playcount: String?
+    let listeners: String?
+    let playcount: String?
     let tracks: APITracksModel?
     let tags: APITagsModel?
     let wiki: APIWikiModel?

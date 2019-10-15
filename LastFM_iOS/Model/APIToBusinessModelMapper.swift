@@ -11,8 +11,11 @@ import Foundation
 class APIToBusinessModelMapper {
     
     static func mapArtistArray(apiArtistModelArray: [APIArtistModel]) -> [ArtistModel] {
+        
         var artistModelArray = [ArtistModel]()
-        apiArtistModelArray.forEach { apiArtistModel in
+        
+        apiArtistModelArray.forEach { apiArtistModel in //TODO: how this can be changed to map/compactMap
+            
             if  let artistName = apiArtistModel.name,
                 let artistMbid = apiArtistModel.mbid {
                 
@@ -24,12 +27,16 @@ class APIToBusinessModelMapper {
                     ))
             }
         }
+        
         return artistModelArray
     }
     
     static func mapAlbumArray(apiArtistModelArray: [APIAlbumModel]) -> [AlbumModel] {
+        
         var artistModelArray = [AlbumModel]()
+        
         apiArtistModelArray.forEach { apiAlbumModel in
+            
             if  let albumName = apiAlbumModel.name,
                 let alnumMbid = apiAlbumModel.mbid {
                 
@@ -45,29 +52,33 @@ class APIToBusinessModelMapper {
     }
     
     static func mapAlbumInfo(apiAlbumInfoModel: APIAlbumInfoModel) -> AlbumInfoModel? {
+        
         if  let albumName       = apiAlbumInfoModel.name,
             let albumMbid       = apiAlbumInfoModel.mbid,
             let apiAlbumTracks  = apiAlbumInfoModel.tracks?.track {
             
-            var albumDescription = apiAlbumInfoModel.wiki?.summary
-            if (albumDescription != nil) {
-                albumDescription = String(albumDescription!.prefix(upTo: albumDescription!.firstIndex(of: "<") ?? albumDescription!.endIndex))
-            }
-            
-            return AlbumInfoModel(
-                artistName:     nil,
-                name:           albumName,
-                imageUrl:       apiAlbumInfoModel.image?[APIImageSize.indexOf(apiImageSize: .extralarge)].text,
-                mbid:           albumMbid,
-                description:    albumDescription,
-                tracks:         mapTracksArray(apiTracksArray: apiAlbumTracks)
-            )
+                var albumDescription = apiAlbumInfoModel.wiki?.summary
+                
+                if (albumDescription != nil) {
+                    albumDescription = String(albumDescription!.prefix(upTo: albumDescription!.firstIndex(of: "<") ?? albumDescription!.endIndex))
+                }
+                
+                return AlbumInfoModel(
+                    artistName:     nil,
+                    name:           albumName,
+                    imageUrl:       apiAlbumInfoModel.image?[APIImageSize.indexOf(apiImageSize: .extralarge)].text,
+                    mbid:           albumMbid,
+                    description:    albumDescription,
+                    tracks:         mapTracksArray(apiTracksArray: apiAlbumTracks)
+                )
         }
         return nil
     }
     
     private static func mapTracksArray(apiTracksArray: [APITrackModel]) -> [TrackModel] {
+        
         var tracksArray = [TrackModel]()
+        
         apiTracksArray.forEach { apiTrackModel in
             if  let trackName       = apiTrackModel.name,
                 let trackDuration   = apiTrackModel.duration {

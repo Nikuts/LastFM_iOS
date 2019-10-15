@@ -3,10 +3,10 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "FetchedAlbumsViewController.tableView(_:prefetchRowsAt:):FetchedAlbumsViewController.swift">
+         contextName = "AlbumInfoViewController.viewDidLoad():AlbumInfoViewController.swift">
          <PersistentStrings>
             <PersistentString
-               value = "items.count - 10">
+               value = "self.albumInfo != nil">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -20,6 +20,14 @@
       </ContextState>
       <ContextState
          contextName = "AlbumInfoViewController.tableView(_:cellForRowAt:):AlbumInfoViewController.swift">
+      </ContextState>
+      <ContextState
+         contextName = "FetchedAlbumsViewController.tableView(_:prefetchRowsAt:):FetchedAlbumsViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "items.count - 10">
+            </PersistentString>
+         </PersistentStrings>
       </ContextState>
    </ContextStates>
 </VariablesViewState>

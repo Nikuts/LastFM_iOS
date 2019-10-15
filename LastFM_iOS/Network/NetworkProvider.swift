@@ -13,77 +13,61 @@ import UIKit
 
 class NetworkProvider {
     
-    public static func getArtistByName(artistName: String, page: Int, completion: @escaping (APIArtistSearchModel?) -> Void) {
+    //    MARK: - Private constants
+    private struct Constants {
+        static let BASE_URL = "http://ws.audioscrobbler.com/2.0/"
+        static let API_KEY = "2b610a43419cab706301a2e2371c348c"
+        static let FORMAT = "json"
+    }
+    
+    public static func getArtist(artistName: String, page: Int, completion: @escaping (APIArtistSearchModel?) -> Void) {
        
-        let urlString = "\(BASE_URL)?" +
+        let urlString = "\(Constants.BASE_URL)?" +
                             "method=artist.search&" +
                             "artist=\(artistName.replacingOccurrences(of: " ", with: "%20"))&" +
-                            "api_key=\(API_KEY)&" +
+                            "api_key=\(Constants.API_KEY)&" +
                             "page=\(page)&" +
-                            "format=\(FORMAT)"
+                            "format=\(Constants.FORMAT)"
         
         AF.request(urlString).responseData { response in
-            switch response.result {
-            case let .success(value):
-                do {
-                    let decoder = JSONDecoder()
-                    let apiArtistSearch = try decoder.decode(APIArtistSearchModel.self, from: value)
-                    
-                    completion(apiArtistSearch)
-                } catch let error {
-                    debugPrint(error)
-                    completion(nil)
-                }
-            case let .failure(error):
-                debugPrint(error)
-                completion(nil)
-            }
+            parseResponseData(data: response, completion: completion)
         }
     }
     
-    public static func getTopAlbumsByMbid(mbid: String, page: Int, completion: @escaping (APITopAlbumsSearchModel?) -> Void) {
-        let urlString = "\(BASE_URL)?" +
+    public static func getTopAlbums(mbid: String, page: Int, completion: @escaping (APITopAlbumsSearchModel?) -> Void) {
+        let urlString = "\(Constants.BASE_URL)?" +
                             "method=artist.gettopalbums&" +
                             "mbid=\(mbid)&" +
-                            "api_key=\(API_KEY)&" +
+                            "api_key=\(Constants.API_KEY)&" +
                             "page=\(page)&" +
-                            "format=\(FORMAT)"
+                            "format=\(Constants.FORMAT)"
         
         AF.request(urlString).responseData { response in
-            switch response.result {
-            case let .success(value):
-                do {
-                    let decoder = JSONDecoder()
-                    let apiTopAlbumsSearch = try decoder.decode(APITopAlbumsSearchModel.self, from: value)
-                    
-                    completion(apiTopAlbumsSearch)
-                } catch let error {
-                    debugPrint(error)
-                    completion(nil)
-                }
-            case let .failure(error):
-                debugPrint(error)
-                completion(nil)
-            }
+            parseResponseData(data: response, completion: completion)
         }
     }
     
-    public static func getAlbumInfoByMbid(mbid: String, completion: @escaping (APIAlbumInfoResultModel?) -> Void) {
+    public static func getAlbumInfo(mbid: String, completion: @escaping (APIAlbumInfoResultModel?) -> Void) {
         
-        let urlString = "\(BASE_URL)?" +
+        let urlString = "\(Constants.BASE_URL)?" +
             "method=album.getinfo&" +
             "mbid=\(mbid)&" +
-            "api_key=\(API_KEY)&" +
-            "format=\(FORMAT)"
+            "api_key=\(Constants.API_KEY)&" +
+            "format=\(Constants.FORMAT)"
         
         AF.request(urlString).responseData { response in
-            switch response.result {
+            parseResponseData(data: response, completion: completion)
+        }
+    }
+    
+    private static func parseResponseData<T: Codable>(data: AFDataResponse<Data>, completion: @escaping (T?) -> Void) {
+        switch data.result {
             case let .success(value):
                 do {
                     let decoder = JSONDecoder()
-                    let apiAlbumInfoResult = try decoder.decode(APIAlbumInfoResultModel.self, from: value)
+                    let result = try decoder.decode(T.self, from: value)
                     
-                    completion(apiAlbumInfoResult)
+                    completion(result)
                 } catch let error {
                     debugPrint(error)
                     completion(nil)
@@ -91,12 +75,6 @@ class NetworkProvider {
             case let .failure(error):
                 debugPrint(error)
                 completion(nil)
-            }
         }
     }
-    
-    //    MARK: Private constants
-    private static let BASE_URL = "http://ws.audioscrobbler.com/2.0/"
-    private static let API_KEY = "2b610a43419cab706301a2e2371c348c"
-    private static let FORMAT = "json"
 }

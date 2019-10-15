@@ -7,14 +7,17 @@
 //
 
 import UIKit
-import os.log
 
-class ArtistSearchCollectionViewController: UICollectionViewController, UISearchBarDelegate, UICollectionViewDataSourcePrefetching, UICollectionViewDelegateFlowLayout {
+class ArtistSearchCollectionViewController: UICollectionViewController, UICollectionViewDataSourcePrefetching {
+    
+    private struct Constants {
+        static let DEFAULT_SIZE = CGSize(width: 130, height: 180)
+        static let DEFAULT_LOADING_HEIGHT = CGFloat(40)
+    }
     
     private var items = [BaseCollectionViewItem<ArtistModel>]()
     
-    private let defaultSize = CGSize(width: 130, height: 180)
-    
+
     private let numberOfSections = 1
     
     private var currentPage = 1
@@ -22,11 +25,14 @@ class ArtistSearchCollectionViewController: UICollectionViewController, UISearch
     private var loadingItemIndex = 0
     
     override func viewWillAppear(_ animated: Bool) {
-        createSearchBar()
+        super.viewWillAppear(animated)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        createSearchBar()
+        
         self.collectionView.prefetchDataSource = self
         
         self.collectionView.register(UINib(nibName: CollectionCellType.Loading.rawValue, bundle: nil), forCellWithReuseIdentifier: CollectionCellType.Loading.rawValue)
@@ -39,21 +45,22 @@ class ArtistSearchCollectionViewController: UICollectionViewController, UISearch
         searchBar.placeholder = "Search for artist"
         searchBar.delegate = self
         
+        self.definesPresentationContext = true
+        
         self.navigationItem.titleView = searchBar
     }
 
-    //    MARK: UICollectionViewDataSourcePrefetching
+    //    MARK: - UICollectionViewDataSourcePrefetching
     
     func collectionView(_ collectionView: UICollectionView, prefetchItemsAt indexPaths: [IndexPath]) {
         if let lastIndex = indexPaths.last?.row {
             if (!items.isEmpty && lastIndex <= items.count - 10) {
-                os_log("Prefetching time!")
-                
+                print("Prefetching time!")
             }
         }
     }
     
-    // MARK: UICollectionViewDataSource
+    // MARK: - UICollectionViewDataSource
 
     override func numberOfSections(in collectionView: UICollectionView) -> Int {
         return self.numberOfSections
@@ -71,6 +78,7 @@ class ArtistSearchCollectionViewController: UICollectionViewController, UISearch
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: currentItem.cellType.rawValue, for: indexPath)
         
         if let artistCell = cell as? ArtistCollectionViewCell {
+            
             if let imageUrl = URL.init(string: currentItem.value?.imageUrl ?? "") {
                 artistCell.image.af_setImage(withURL: imageUrl)
             }
@@ -85,23 +93,15 @@ class ArtistSearchCollectionViewController: UICollectionViewController, UISearch
         return cell
     }
     
-    // MARK: UICollectionViewDelegateFlowLayout
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        if (items[indexPath.row].cellType == .Loading) {
-            return CGSize(width: UIScreen.main.bounds.size.width, height: 40)
-        } else {
-            return defaultSize
-        }
-    }
-    
-    // MARK: UICollectionViewDelegate & Navigation
+    // MARK: - UICollectionViewDelegate & Navigation
     
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         guard let fetchedAlbumsVC = storyboard?.instantiateViewController(withIdentifier: String(describing: FetchedAlbumsViewController.self)) as? FetchedAlbumsViewController else {
+            
             fatalError("There is no FetchedAlbumsViewController in the storyboard.")
         }
         if let currentArtist = items[indexPath.row].value {
+            
             fetchedAlbumsVC.navigationItem.title = currentArtist.name
             fetchedAlbumsVC.artist = currentArtist
         }
@@ -109,46 +109,18 @@ class ArtistSearchCollectionViewController: UICollectionViewController, UISearch
         navigationController?.pushViewController(fetchedAlbumsVC, animated: true)
     }
     
-    //    MARK: UISearchBarDelegate
-    
-    func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
-        searchBar.setShowsCancelButton(true, animated: true)
-        return true
-    }
-    
-    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        if let text = searchBar.text {
-            if(!text.isEmpty){
-                
-                self.items.removeAll()
-                self.collectionView?.reloadData()
-                
-                enableLoadingCell(enable: true)
-                
-                searchBar.resignFirstResponder()
-                searchBar.setShowsCancelButton(true, animated: true)
-                
-                fetchArtists(name: text, page: self.currentPage)
-            }
-        }
-    }
-    
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchBar.text? = ""
-        searchBar.setShowsCancelButton(false, animated: true)
-        searchBar.resignFirstResponder()
-    }
-    
-    //    MARK: Networking
+    //    MARK: - Networking
     
     private func fetchArtists(name: String, page: Int) {
     
-        NetworkProvider.getArtistByName(artistName: name, page: page) { [weak self] apiArtistSearchModel in
+        NetworkProvider.getArtist(artistName: name, page: page) { [weak self] apiArtistSearchModel in
             
             if let loadedArtists = apiArtistSearchModel?.results?.artistmatches?.artist {
-                APIToBusinessModelMapper.mapArtistArray(apiArtistModelArray: loadedArtists).forEach { artistModel in
-                    self?.items.append(BaseCollectionViewItem<ArtistModel>(value: artistModel, cellId: .Artist))
-                }
+                
+                self?.items.append(contentsOf: APIToBusinessModelMapper.mapArtistArray(apiArtistModelArray: loadedArtists).map {
+                    BaseCollectionViewItem<ArtistModel>(value: $0, cellId: .Artist)
+                })
+                
                 self?.enableLoadingCell(enable: false)
             }
         }
@@ -156,15 +128,69 @@ class ArtistSearchCollectionViewController: UICollectionViewController, UISearch
     
     private func enableLoadingCell(enable: Bool) {
         if (enable && !isLoadingAdded()) {
+            
             self.items.append(BaseCollectionViewItem(value: nil, cellId: .Loading))
             self.collectionView.reloadData()
+            
         } else if (!enable && isLoadingAdded()) {
+            
             self.items.removeAll(where: {item in item.cellType == .Loading})
             self.collectionView.reloadData()
+            
         }
     }
     
     private func isLoadingAdded() -> Bool {
         return self.items.first(where: {item in item.cellType == .Loading}) != nil
     }
+}
+
+//    MARK: - UISearchBarDelegate
+
+extension ArtistSearchCollectionViewController: UISearchBarDelegate {
+
+      func searchBarShouldBeginEditing(_ searchBar: UISearchBar) -> Bool {
+          searchBar.setShowsCancelButton(true, animated: true)
+          return true
+      }
+      
+      func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+          if let text = searchBar.text {
+              if(!text.isEmpty){
+                  
+                  self.items.removeAll()
+                  self.collectionView?.reloadData()
+                  
+                  enableLoadingCell(enable: true)
+                  
+                  searchBar.resignFirstResponder()
+                  searchBar.setShowsCancelButton(true, animated: true)
+                  
+                  fetchArtists(name: text, page: self.currentPage)
+              }
+          }
+      }
+      
+      func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        
+          searchBar.text? = ""
+          searchBar.setShowsCancelButton(false, animated: true)
+          searchBar.resignFirstResponder()
+      }
+      
+}
+
+// MARK: - UICollectionViewDelegateFlowLayout
+
+extension ArtistSearchCollectionViewController: UICollectionViewDelegateFlowLayout {
+
+       func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+           
+           if (items[indexPath.row].cellType == .Loading) {
+               return CGSize(width: UIScreen.main.bounds.size.width, height: Constants.DEFAULT_LOADING_HEIGHT)
+           } else {
+               return Constants.DEFAULT_SIZE
+           }
+       }
+       
 }

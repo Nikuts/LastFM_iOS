@@ -8,10 +8,4 @@
 
 import UIKit
 
-class LoadingCollectionViewCell: UICollectionViewCell {
-
-    override func awakeFromNib() {
-        super.awakeFromNib()
-    }
-
-}
+class LoadingCollectionViewCell: UICollectionViewCell {}

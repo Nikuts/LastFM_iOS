@@ -31,6 +31,12 @@ import UIKit
 import Cocoa
 #endif
 
+/// Alias for `DataResponse<T, AFIError>`.
+public typealias AFIDataResponse<T> = DataResponse<T, AFIError>
+
+/// Alias for `Result<T, AFIError>`.
+public typealias AFIResult<T> = Result<T, AFIError>
+
 /// The `RequestReceipt` is an object vended by the `ImageDownloader` when starting a download request. It can be used
 /// to cancel active requests running on the `ImageDownloader` session. As a general rule, image download requests
 /// should be cancelled using the `RequestReceipt` instead of calling `cancel` directly on the `request` itself. The
@@ -58,7 +64,7 @@ open class RequestReceipt {
 /// handlers for a single request.
 open class ImageDownloader {
     /// The completion handler closure used when an image download completes.
-    public typealias CompletionHandler = (DataResponse<Image>) -> Void
+    public typealias CompletionHandler = (AFIDataResponse<Image>) -> Void
 
     /// The progress handler closure called periodically during an image download.
     public typealias ProgressHandler = DataRequest.ProgressHandler
@@ -152,11 +158,28 @@ open class ImageDownloader {
     ///
     /// - returns: The default `URLCache` instance.
     open class func defaultURLCache() -> URLCache {
+        let memoryCapacity = 20 * 1024 * 1024
+        let diskCapacity = 150 * 1024 * 1024
+        let cacheDirectory = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first
+        let imageDownloaderPath = "org.alamofire.imagedownloader"
+        
+        #if targetEnvironment(macCatalyst)
         return URLCache(
-            memoryCapacity: 20 * 1024 * 1024, // 20 MB
-            diskCapacity: 150 * 1024 * 1024,  // 150 MB
-            diskPath: "org.alamofire.imagedownloader"
+            memoryCapacity: memoryCapacity,
+            diskCapacity: diskCapacity,
+            directory: cacheDirectory?.appendingPathComponent(imageDownloaderPath)
         )
+        #else
+        #if os(macOS)
+        return URLCache(memoryCapacity: memoryCapacity,
+                        diskCapacity: diskCapacity,
+                        diskPath: cacheDirectory?.appendingPathComponent(imageDownloaderPath).absoluteString)
+        #else
+        return URLCache(memoryCapacity: memoryCapacity,
+                        diskCapacity: diskCapacity,
+                        diskPath: imageDownloaderPath)
+        #endif
+        #endif
     }
 
     /// Initializes the `ImageDownloader` instance with the given configuration, download prioritization, maximum active
@@ -284,7 +307,7 @@ open class ImageDownloader {
                 case .useProtocolCachePolicy, .returnCacheDataElseLoad, .returnCacheDataDontLoad:
                     if let image = self.imageCache?.image(for: request, withIdentifier: filter?.identifier) {
                         DispatchQueue.main.async {
-                            let response = DataResponse<Image>(
+                            let response = AFIDataResponse<Image>(
                                 request: urlRequest.urlRequest,
                                 response: nil,
                                 data: nil,
@@ -322,19 +345,18 @@ open class ImageDownloader {
             request.response(
                 queue: self.responseQueue,
                 responseSerializer: imageResponseSerializer,
-                completionHandler: { [weak self] response in
-                    guard let strongSelf = self, let request = response.request else { return }
-
+                completionHandler: { response in
                     defer {
-                        strongSelf.safelyDecrementActiveRequestCount()
-                        strongSelf.safelyStartNextRequestIfNecessary()
+                        self.safelyDecrementActiveRequestCount()
+                        self.safelyStartNextRequestIfNecessary()
                     }
 
                     // Early out if the request has changed out from under us
-                    let handler = strongSelf.safelyFetchResponseHandler(withURLIdentifier: urlID)
-                    guard handler?.handlerID == handlerID else { return }
-
-                    guard let responseHandler = strongSelf.safelyRemoveResponseHandler(withURLIdentifier: urlID) else {
+                    guard
+                        let handler = self.safelyFetchResponseHandler(withURLIdentifier: urlID),
+                        handler.handlerID == handlerID,
+                        let responseHandler = self.safelyRemoveResponseHandler(withURLIdentifier: urlID)
+                    else {
                         return
                     }
 
@@ -356,10 +378,12 @@ open class ImageDownloader {
                                 filteredImage = image
                             }
 
-                            strongSelf.imageCache?.add(filteredImage, for: request, withIdentifier: filter?.identifier)
+                            if let request = response.request {
+                                self.imageCache?.add(filteredImage, for: request, withIdentifier: filter?.identifier)
+                            }
 
                             DispatchQueue.main.async {
-                                let response = DataResponse<Image>(
+                                let response = AFIDataResponse<Image>(
                                     request: response.request,
                                     response: response.response,
                                     data: response.data,
@@ -373,7 +397,7 @@ open class ImageDownloader {
                         }
                     case .failure:
                         for (_, _, completion) in responseHandler.operations {
-                            DispatchQueue.main.async { completion?(response) }
+                            DispatchQueue.main.async { completion?(response.mapError { AFIError.alamofireError($0) }) }
                         }
                     }
                 }
@@ -459,7 +483,7 @@ open class ImageDownloader {
             if let index = index {
                 let operation = responseHandler.operations.remove(at: index)
 
-                let response: DataResponse<Image> = {
+                let response: AFIDataResponse<Image> = {
                     let urlRequest = requestReceipt.request.request
                     let error = AFIError.requestCancelled
 
@@ -476,7 +500,7 @@ open class ImageDownloader {
                 DispatchQueue.main.async { operation.completion?(response) }
             }
 
-            if responseHandler.operations.isEmpty && requestReceipt.request.task?.state == .suspended {
+            if responseHandler.operations.isEmpty {
                 requestReceipt.request.cancel()
                 self.responseHandlers.removeValue(forKey: urlID)
             }
@@ -509,20 +533,15 @@ open class ImageDownloader {
         synchronizationQueue.sync {
             guard self.isActiveRequestCountBelowMaximumLimit() else { return }
 
-            while !self.queuedRequests.isEmpty {
-                if let request = self.dequeue(), request.task?.state == .suspended {
-                    self.start(request)
-                    break
-                }
-            }
+            guard let request = self.dequeue() else { return }
+
+            self.start(request)
         }
     }
 
     func safelyDecrementActiveRequestCount() {
-        self.synchronizationQueue.sync {
-            if self.activeRequestCount > 0 {
-                self.activeRequestCount -= 1
-            }
+        synchronizationQueue.sync {
+            self.activeRequestCount -= 1
         }
     }
 

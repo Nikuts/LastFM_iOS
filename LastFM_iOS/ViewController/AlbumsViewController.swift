@@ -12,6 +12,10 @@ class AlbumsViewController: UIViewController, UITableViewDelegate {
    
     internal var tableView: UITableView!
     
+    internal struct Constants {
+        static let DEFAULT_ROW_HEIGHT: CGFloat = 150
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -21,7 +25,7 @@ class AlbumsViewController: UIViewController, UITableViewDelegate {
         
         self.tableView = UITableView(frame: CGRect(x: 0, y: barHeight, width: displayWidth, height: displayHeight - barHeight))
         self.tableView.delegate = self
-        self.tableView.estimatedRowHeight = DEFAULT_ROW_HEIGHT
+        self.tableView.estimatedRowHeight = Constants.DEFAULT_ROW_HEIGHT
         self.view.addSubview(tableView)
         
         registerCells()
@@ -34,6 +38,4 @@ class AlbumsViewController: UIViewController, UITableViewDelegate {
     }
     
     internal func registerCells() {}
-    
-    private let DEFAULT_ROW_HEIGHT: CGFloat = 150
 }

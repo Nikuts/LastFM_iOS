@@ -12,21 +12,23 @@ class BusinessDBModelMapper {
     
     static func albumInfoBusinessToDB(albumInfo: AlbumInfoModel) -> RealmAlbumInfoModel {
         let realmAlbumInfo = RealmAlbumInfoModel()
-        realmAlbumInfo.artistName = albumInfo.artistName ?? ""
-        realmAlbumInfo.name = albumInfo.name
-        realmAlbumInfo.imageUrl = albumInfo.imageUrl ?? ""
-        realmAlbumInfo.mbid = albumInfo.mbid
-        realmAlbumInfo.albumDescription = albumInfo.description ?? ""
         
-        albumInfo.tracks.forEach { track in
-            realmAlbumInfo.tracks.append(trackBusinessToDB(track: track))
-        }
+        realmAlbumInfo.artistName           = albumInfo.artistName ?? ""
+        realmAlbumInfo.name                 = albumInfo.name
+        realmAlbumInfo.imageUrl             = albumInfo.imageUrl ?? ""
+        realmAlbumInfo.mbid                 = albumInfo.mbid
+        realmAlbumInfo.albumDescription     = albumInfo.description ?? ""
         
+        realmAlbumInfo.tracks.append(objectsIn: albumInfo.tracks.map {
+                  trackBusinessToDB(track: $0)
+               })
+    
         return realmAlbumInfo
     }
     
     static func trackBusinessToDB(track: TrackModel) -> RealmTrackModel {
         let realmTrack = RealmTrackModel()
+        
         realmTrack.name = track.name
         realmTrack.duration = track.duration
         
@@ -35,9 +37,11 @@ class BusinessDBModelMapper {
     
     static func albumInfoDBToBusiness(realmAlbumInfo: RealmAlbumInfoModel) -> AlbumInfoModel {
         var tracks = [TrackModel]()
-        realmAlbumInfo.tracks.forEach { realmTrack in
-            tracks.append(TrackModel(name: realmTrack.name, duration: realmTrack.duration))
-        }
+        
+        tracks.append(contentsOf: realmAlbumInfo.tracks.map {
+            TrackModel(name: $0.name, duration: $0.duration)
+        })
+        
         
         return AlbumInfoModel(
             artistName:     realmAlbumInfo.artistName,

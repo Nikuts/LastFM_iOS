@@ -23,9 +23,10 @@ class SavedAlbumsViewController: AlbumsViewController, UITableViewDataSource, Al
         self.items.append(BaseTableViewItem(value: nil, cellId: .Loading))
         self.tableView.reloadData()
         
-        DataBaseManager.getAllAlbumInfos().forEach { albumInfo in
-            self.items.append(BaseTableViewItem(value: albumInfo, cellId: .Album))
-        }
+        self.items.append(contentsOf: DataBaseManager.getAll().map {
+            BaseTableViewItem(value: $0, cellId: .Album)
+        })
+        
         self.items.remove(at: 0)
         self.tableView.reloadData()
     }
@@ -38,9 +39,10 @@ class SavedAlbumsViewController: AlbumsViewController, UITableViewDataSource, Al
         self.tableView.register(loadingNib, forCellReuseIdentifier: loadingCellId)
     }
     
-    //    MARK: UITableViewDataSource
+    //    MARK: - UITableViewDataSource
     
     func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        
         if editingStyle == .delete {
             deleteAlbumInfo(indexPath: indexPath)
         }
@@ -75,29 +77,38 @@ class SavedAlbumsViewController: AlbumsViewController, UITableViewDataSource, Al
     //    MARK: Navigation
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let albumInfoVC = storyboard?.instantiateViewController(withIdentifier: String(describing: AlbumInfoViewController.self)) as? AlbumInfoViewController else {
+        
+        guard let albumInfoVC = storyboard?.instantiateViewController(withIdentifier: String(describing: AlbumInfoViewController.self)) as?
+            AlbumInfoViewController else {
             fatalError("There is no \(AlbumInfoViewController.self) in the storyboard.")
         }
+        
         if let currentAlbumInfo = self.items[indexPath.row].value {
+            
             albumInfoVC.navigationItem.title = currentAlbumInfo.name
             albumInfoVC.albumInfo = currentAlbumInfo
         }
+        
         navigationController?.pushViewController(albumInfoVC, animated: true)
     }
     
-    // MARK: AlbumActionsProtocol
+    // MARK: - AlbumActionsProtocol
 
     func onDeleteAlbum(mbid: String) {
+        
         if let index = self.items.firstIndex(where: { item in item.value?.mbid == mbid }) {
             deleteAlbumInfo(indexPath: IndexPath(row: index, section: 0))
         }
     }
     
-    //    MARK: Private methods
+    //    MARK: - Private methods
     
     private func deleteAlbumInfo(indexPath: IndexPath) {
+        
         if let currentAlbumInfo = self.items[indexPath.row].value {
-            DataBaseManager.deleteAlbumInfo(albumInfo: currentAlbumInfo)
+            
+            DataBaseManager.delete(albumInfo: currentAlbumInfo)
+            
             self.items.remove(at: indexPath.row)
             self.tableView.deleteRows(at: [indexPath], with: .automatic)
         }

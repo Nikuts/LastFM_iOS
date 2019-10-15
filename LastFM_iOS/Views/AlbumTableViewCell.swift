@@ -18,11 +18,15 @@ class AlbumTableViewCell: UITableViewCell {
     var isSaved = false {
         didSet {
             if (isSaved) {
+                
                 self.saveButton.setTitle("Delete", for: .normal)
                 self.saveButton.sizeToFit()
+                
             } else {
+                
                 self.saveButton.setTitle("Save", for: .normal)
                 self.saveButton.sizeToFit()
+                
             }
         }
     }
@@ -31,14 +35,21 @@ class AlbumTableViewCell: UITableViewCell {
     var album: AlbumModel?
     
     @IBAction func onSaveClicked(_ sender: UIButton) {
+        
         self.isSaved = !self.isSaved
+        
         if (isSaved) {
+            
             if let albumMbid = album?.mbid {
-                NetworkProvider.getAlbumInfoByMbid(mbid: albumMbid) { apiAlbumInfoResultModel in
+                
+                NetworkProvider.getAlbumInfo(mbid: albumMbid) { apiAlbumInfoResultModel in
+                    
                     if let apiAlbumInfoModel = apiAlbumInfoResultModel?.album {
+                        
                         if let albumInfoModel = APIToBusinessModelMapper.mapAlbumInfo(apiAlbumInfoModel: apiAlbumInfoModel) {
+                            
                             albumInfoModel.artistName = self.artistName.text
-                            DataBaseManager.saveAlbumInfo(albumInfo: albumInfoModel)
+                            DataBaseManager.save(albumInfo: albumInfoModel)
                         }
                     }
                 }
