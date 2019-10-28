@@ -3,10 +3,21 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "AlbumInfoViewController.viewDidLoad():AlbumInfoViewController.swift">
+         contextName = "FetchedAlbumsViewController.tableView(_:prefetchRowsAt:):FetchedAlbumsViewController.swift">
          <PersistentStrings>
             <PersistentString
-               value = "self.albumInfo != nil">
+               value = "items.count - 10">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "FetchedAlbumsViewController.tableView(_:cellForRowAt:):FetchedAlbumsViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "currentAlbum.mbid">
+            </PersistentString>
+            <PersistentString
+               value = "DataBaseManager.isSaved(mbid: currentAlbum.mbid)">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -22,10 +33,10 @@
          contextName = "AlbumInfoViewController.tableView(_:cellForRowAt:):AlbumInfoViewController.swift">
       </ContextState>
       <ContextState
-         contextName = "FetchedAlbumsViewController.tableView(_:prefetchRowsAt:):FetchedAlbumsViewController.swift">
+         contextName = "AlbumInfoViewController.viewDidLoad():AlbumInfoViewController.swift">
          <PersistentStrings>
             <PersistentString
-               value = "items.count - 10">
+               value = "self.albumInfo != nil">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

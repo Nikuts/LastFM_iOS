@@ -61,6 +61,6 @@ class DataBaseManager {
     static func isSaved(mbid: String) -> Bool {
         let realm = try? Realm()
         
-        return realm?.objects(RealmAlbumInfoModel.self).filter("mbid == %@", mbid).isEmpty ?? false
+        return !(realm?.objects(RealmAlbumInfoModel.self).filter("mbid == %@", mbid).isEmpty ?? true)
     }
 }

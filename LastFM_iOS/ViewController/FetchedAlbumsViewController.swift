@@ -38,9 +38,16 @@ class FetchedAlbumsViewController: AlbumsViewController, UITableViewDataSource, 
         self.tableView.register(loadingNib, forCellReuseIdentifier: loadingCellId)
     }
     
-    //    MARK: UITableViewDataSource
+    //    MARK: - UITableViewDataSource
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        if (items.count == 0) {
+            self.showEmptyMessage(message: nil)
+        } else {
+            self.hideEmptyMessage()
+        }
+        
         return self.items.count
     }
     
@@ -64,7 +71,7 @@ class FetchedAlbumsViewController: AlbumsViewController, UITableViewDataSource, 
         return cell
     }
     
-    // MARK: UITableViewDataSourcePrefetching
+    // MARK: - UITableViewDataSourcePrefetching
     
     func tableView(_ tableView: UITableView, prefetchRowsAt indexPaths: [IndexPath]) {
         if let lastIndex = indexPaths.last?.row {
@@ -79,13 +86,13 @@ class FetchedAlbumsViewController: AlbumsViewController, UITableViewDataSource, 
         }
     }
     
-    //    MARK: AlbumActionsProtocol
+    //    MARK: - AlbumActionsProtocol
     
     func onDeleteAlbum(mbid: String) {
         DataBaseManager.delete(mbid: mbid)
     }
     
-    //    MARK: Navigation
+    //    MARK: - UITableViewDelegate
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let albumInfoVC = storyboard?.instantiateViewController(withIdentifier: String(describing: AlbumInfoViewController.self)) as? AlbumInfoViewController else {
@@ -102,7 +109,7 @@ class FetchedAlbumsViewController: AlbumsViewController, UITableViewDataSource, 
         navigationController?.pushViewController(albumInfoVC, animated: true)
     }
     
-    // MARK: Private methods
+    // MARK: - Private methods
     
     private func enableLoadingCell(enable: Bool) {
         if (enable && !isLoadingAdded()) {

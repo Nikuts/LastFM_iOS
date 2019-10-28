@@ -49,6 +49,13 @@ class SavedAlbumsViewController: AlbumsViewController, UITableViewDataSource, Al
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        if (items.count == 0) {
+            self.showEmptyMessage(message: "You don't have any saved albums yet.")
+        } else {
+            self.hideEmptyMessage()
+        }
+        
         return items.count
     }
     
@@ -74,7 +81,7 @@ class SavedAlbumsViewController: AlbumsViewController, UITableViewDataSource, Al
         return cell
     }
     
-    //    MARK: Navigation
+    // MARK: - UITableViewDelegate
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         

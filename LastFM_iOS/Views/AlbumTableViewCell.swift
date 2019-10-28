@@ -38,7 +38,7 @@ class AlbumTableViewCell: UITableViewCell {
         
         self.isSaved = !self.isSaved
         
-        if (isSaved) {
+        if (isSaved) {    
             
             if let albumMbid = album?.mbid {
                 

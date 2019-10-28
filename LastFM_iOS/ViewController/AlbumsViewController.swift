@@ -38,4 +38,30 @@ class AlbumsViewController: UIViewController, UITableViewDelegate {
     }
     
     internal func registerCells() {}
+    
+    internal func showEmptyMessage(message: String?) {
+        
+        if let unwrappedMessage = message {
+        
+            let rect = CGRect(origin: CGPoint(x: 0,y :0), size: CGSize(width: self.view.bounds.size.width, height: self.view.bounds.size.height))
+            let messageLabel = UILabel(frame: rect)
+            messageLabel.text = unwrappedMessage
+            messageLabel.textColor = UIColor.black
+            messageLabel.numberOfLines = 0;
+            messageLabel.textAlignment = .center;
+            messageLabel.font = UIFont(name: "TrebuchetMS", size: 15)
+            messageLabel.sizeToFit()
+
+            self.tableView.backgroundView = messageLabel;
+        } else {
+            self.tableView.backgroundView = nil
+        }
+        
+        self.tableView.separatorStyle = .none;
+    }
+    
+    internal func hideEmptyMessage() {
+        self.tableView.backgroundView = nil
+        self.tableView.separatorStyle = .singleLine
+    }
 }

@@ -321,9 +321,9 @@
 		C220462522EF7756007FFE08 /* ViewController */ = {
 			isa = PBXGroup;
 			children = (
+				C204ED8922F48DF900FDA056 /* AlbumsViewController.swift */,
 				C204ED8B22F4930A00FDA056 /* SavedAlbumsViewController.swift */,
 				C220462F22EF94D0007FFE08 /* ArtistSearchCollectionViewController.swift */,
-				C204ED8922F48DF900FDA056 /* AlbumsViewController.swift */,
 				C204ED8D22F4DC3900FDA056 /* FetchedAlbumsViewController.swift */,
 				C204EDA522F8539200FDA056 /* AlbumInfoViewController.swift */,
 				C2FCB39123267D2000F7E8F6 /* AlbumActionsProtocol.swift */,
