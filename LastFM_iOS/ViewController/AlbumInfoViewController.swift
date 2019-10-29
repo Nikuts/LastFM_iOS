@@ -63,12 +63,11 @@ class AlbumInfoViewController: UIViewController, UITableViewDataSource {
             
             self.items.append(BaseTableViewItem(value: albumInfo, cellId: .AlbumInfoDescription))
             
-    //        TODO: howto?
-    //        if let unwrappedTracks = albumInfo?.tracks {
-    //            self.items.append(contentsOf: unwrappedTracks.map {
-    //                BaseTableViewItem(value: $0, cellId: .AlbumInfoTrack)
-    //            })
-    //        }
+//            TODO: howto?
+//            if let unwrappedTracks = albumInfo?.tracks {
+//                let newItems = unwrappedTracks.map { BaseTableViewItem(value: $0, cellId: .AlbumInfoTrack) }
+//                self.items.append(contentsOf: newItems)
+//            }
 
             albumInfo?.tracks.forEach { track in
                 self.items.append(BaseTableViewItem(value: track, cellId: .AlbumInfoTrack))
@@ -116,29 +115,34 @@ class AlbumInfoViewController: UIViewController, UITableViewDataSource {
     
     @objc private func saveOrDeleteAlbum(sender: UIBarButtonItem) {
         if (self.isSaved) {
+            
             if let albumInfo = self.albumInfo {
                 
                 DataBaseManager.delete(mbid: albumInfo.mbid)
                 
-                self.albumInfo = nil
                 self.isSaved = false
                 
                 updateToolbarButtonTitle()
             }
         } else {
-            if let album = self.album {
-                NetworkProvider.getAlbumInfo(mbid: album.mbid) { [weak self] apiAlbumInfoResult in
+            
+            if let mbid = Array(arrayLiteral: self.album?.mbid, self.albumInfo?.mbid).first(where: {$0 != nil}) {
+            
+                if let unwrappedMbid = mbid {
                     
-                    if let apiAlbumInfo = apiAlbumInfoResult?.album {
+                    NetworkProvider.getAlbumInfo(mbid: unwrappedMbid) { [weak self] apiAlbumInfoResult in
                         
-                        if let albumInfo = APIToBusinessModelMapper.mapAlbumInfo(apiAlbumInfoModel: apiAlbumInfo) {
+                        if let apiAlbumInfo = apiAlbumInfoResult?.album {
                             
-                            DataBaseManager.save(albumInfo: albumInfo)
-                            
-                            self?.album = nil
-                            self?.isSaved = true
-                            
-                            self?.updateToolbarButtonTitle()
+                            if let albumInfo = APIToBusinessModelMapper.mapAlbumInfo(apiAlbumInfoModel: apiAlbumInfo) {
+                                
+                                DataBaseManager.save(albumInfo: albumInfo)
+                                
+                                self?.album = nil
+                                self?.isSaved = true
+                                
+                                self?.updateToolbarButtonTitle()
+                            }
                         }
                     }
                 }

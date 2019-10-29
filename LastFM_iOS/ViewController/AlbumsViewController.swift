@@ -64,4 +64,16 @@ class AlbumsViewController: UIViewController, UITableViewDelegate {
         self.tableView.backgroundView = nil
         self.tableView.separatorStyle = .singleLine
     }
+    
+    internal func insertRows(indexPaths: [IndexPath]) {
+        self.tableView.beginUpdates()
+        self.tableView.insertRows(at: indexPaths, with: .automatic)
+        self.tableView.endUpdates()
+    }
+    
+    internal func deleteRows(indexPaths: [IndexPath]) {
+        self.tableView.beginUpdates()
+        self.tableView.deleteRows(at: indexPaths, with: .automatic)
+        self.tableView.endUpdates()
+    }
 }

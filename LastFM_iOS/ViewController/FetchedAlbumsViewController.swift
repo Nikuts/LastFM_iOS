@@ -7,16 +7,24 @@
 //
 
 import UIKit
+import RealmSwift
 
 class FetchedAlbumsViewController: AlbumsViewController, UITableViewDataSource, AlbumActionsProtocol, UITableViewDataSourcePrefetching {
 
     private let albumCellId = String(describing: AlbumTableViewCell.self)
     private let loadingCellId = String(describing: LoadingTableViewCell.self)
+    
     private var items = [BaseTableViewItem<AlbumModel>] ()
     
+    private var savedAlbums = [AlbumInfoModel]()
+    
+    private var notificationToken: NotificationToken?
+    
     var artist: ArtistModel?
+    
     var currentPage = 1
     var maxPages = 1
+    
     var loadingCellIndex = 0
     
     override func viewDidLoad() {
@@ -28,6 +36,11 @@ class FetchedAlbumsViewController: AlbumsViewController, UITableViewDataSource, 
         items.removeAll()
         
         loadAlbums()
+        
+        notificationToken = DataBaseManager.createObserver () { [weak self] albums, deletions, insertions, modifications in
+            self?.processNotification(albums: albums, deletions: deletions, insertions: insertions, modifications: modifications)
+        }
+            
     }
     
     override func registerCells() {
@@ -37,6 +50,11 @@ class FetchedAlbumsViewController: AlbumsViewController, UITableViewDataSource, 
         self.tableView.register(albumNib, forCellReuseIdentifier: albumCellId)
         self.tableView.register(loadingNib, forCellReuseIdentifier: loadingCellId)
     }
+    
+    deinit {
+        notificationToken?.invalidate()
+    }
+      
     
     //    MARK: - UITableViewDataSource
     
@@ -104,33 +122,27 @@ class FetchedAlbumsViewController: AlbumsViewController, UITableViewDataSource, 
             
             albumInfoVC.navigationItem.title = currentAlbum.name
             albumInfoVC.album = currentAlbum
+            albumInfoVC.albumInfo = savedAlbums.first(where: { $0.mbid == currentAlbum.mbid })
         }
         
         navigationController?.pushViewController(albumInfoVC, animated: true)
     }
     
-    // MARK: - Private methods
+    // MARK: - Loading
     
     private func enableLoadingCell(enable: Bool) {
         if (enable && !isLoadingAdded()) {
             
-            self.tableView.beginUpdates()
-            
             self.items.append(BaseTableViewItem(value: nil, cellId: .Loading))
-            self.tableView.insertRows(at: [IndexPath(row: self.items.count - 1, section: 0)], with: .none)
-            
-            self.tableView.endUpdates()
-            
+            self.insertRows(indexPaths: [IndexPath(row: self.items.count - 1, section: 0)])
+          
         } else if (!enable && isLoadingAdded()) {
             
             if let loadingIndex = self.items.firstIndex(where: {item in item.cellType == .Loading}) {
                 
-                self.tableView.beginUpdates()
-                
                 self.items.remove(at: loadingIndex)
-                self.tableView.deleteRows(at: [IndexPath(row: loadingIndex, section: 0)], with: .none)
-                
-                self.tableView.endUpdates()
+                self.deleteRows(indexPaths: [IndexPath(row: self.items.count - 1, section: 0)])
+               
             }
             
         }
@@ -170,8 +182,55 @@ class FetchedAlbumsViewController: AlbumsViewController, UITableViewDataSource, 
         
         let indexPathsToInsert = (startRow..<endRow).map { IndexPath(row: $0, section: 0) }
         
-        self.tableView.beginUpdates()
-        self.tableView.insertRows(at: indexPathsToInsert, with: .automatic)
-        self.tableView.endUpdates()
+        self.insertRows(indexPaths: indexPathsToInsert)
+    }
+    
+    // MARK: - Notification processing
+    
+    private func processNotification (
+        albums: [AlbumInfoModel]?,
+        deletions: [Int]?,
+        insertions: [Int]?,
+        modifications: [Int]?
+    ) {
+        if (deletions == nil && insertions == nil && modifications == nil) {
+            
+            self.savedAlbums.removeAll()
+            
+            if let unwrappedAlbums = albums {
+                self.savedAlbums.append(contentsOf: unwrappedAlbums)
+            }
+        }
+        
+        if let unwrappedDeletions = deletions {
+            
+            unwrappedDeletions.forEach { deletionIndex in
+            
+                if let index = self.items.firstIndex(where: { $0.value?.mbid == self.savedAlbums[deletionIndex].mbid }) {
+                
+                    let albumCell = self.tableView.cellForRow(at: IndexPath(row: index, section: 0)) as? AlbumTableViewCell
+                    albumCell?.isSaved = false
+                
+                    self.savedAlbums.remove(at: deletionIndex)
+                }
+            }
+        }
+        
+        if let unwrappedInsertions = insertions {
+            
+            unwrappedInsertions.forEach { insertionIndex in
+                               
+                if let index = self.items.firstIndex(where: { $0.value?.mbid == albums?[insertionIndex].mbid }) {
+                   
+                    let albumCell = self.tableView.cellForRow(at: IndexPath(row: index, section: 0)) as? AlbumTableViewCell
+                    albumCell?.isSaved = true
+                
+                    if let insertedAlbum = albums?[insertionIndex] {
+                        self.savedAlbums.append(insertedAlbum)
+                    }
+                
+                }
+            }
+        }
     }
 }

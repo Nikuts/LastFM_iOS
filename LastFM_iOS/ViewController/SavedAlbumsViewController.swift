@@ -16,19 +16,16 @@ class SavedAlbumsViewController: AlbumsViewController, UITableViewDataSource, Al
     
     private var items = [BaseTableViewItem<AlbumInfoModel>]()
     
-    override func viewDidAppear(_ animated: Bool) {
+    private var notificationToken: NotificationToken?
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
         self.tableView.dataSource = self
-        items.removeAll()
         
-        self.items.append(BaseTableViewItem(value: nil, cellId: .Loading))
-        self.tableView.reloadData()
-        
-        self.items.append(contentsOf: DataBaseManager.getAll().map {
-            BaseTableViewItem(value: $0, cellId: .Album)
-        })
-        
-        self.items.remove(at: 0)
-        self.tableView.reloadData()
+        notificationToken = DataBaseManager.createObserver { [weak self] albums, deletions, insertions, modifications in
+            self?.processNotification(albums: albums, deletions: deletions, insertions: insertions, modifications: modifications)
+        }
     }
     
     override func registerCells() {
@@ -37,6 +34,10 @@ class SavedAlbumsViewController: AlbumsViewController, UITableViewDataSource, Al
         
         self.tableView.register(albumNib, forCellReuseIdentifier: albumCellId)
         self.tableView.register(loadingNib, forCellReuseIdentifier: loadingCellId)
+    }
+    
+    deinit {
+        notificationToken?.invalidate()
     }
     
     //    MARK: - UITableViewDataSource
@@ -108,16 +109,61 @@ class SavedAlbumsViewController: AlbumsViewController, UITableViewDataSource, Al
         }
     }
     
+    // MARK: - Notification processing
+    
+    private func processNotification (
+        albums: [AlbumInfoModel]?,
+        deletions: [Int]?,
+        insertions: [Int]?,
+        modifications: [Int]?
+    ) {
+        if (deletions == nil && insertions == nil && modifications == nil) {
+            
+            self.items.removeAll()
+            
+            self.items.insert(BaseTableViewItem(value: nil, cellId: .Loading), at: 0)
+            self.insertRows(indexPaths: [IndexPath(row: 0, section: 0)])
+            
+            if let unwrappedAlbums = albums {
+                self.items.append(contentsOf: unwrappedAlbums.map {
+                    BaseTableViewItem(value: $0, cellId: .Album)
+                })
+                self.items.remove(at: 0)
+                self.tableView.reloadData()
+            }
+        } else {
+            
+            if let unwrappedDeletions = deletions {
+                
+                var indexPathsToDelete = [IndexPath]()
+                unwrappedDeletions.forEach {
+                    self.items.remove(at: $0)
+                    indexPathsToDelete.append(IndexPath(row: $0, section: 0))
+                }
+                
+                self.deleteRows(indexPaths: indexPathsToDelete)
+            }
+            
+            if let unwrappedInsertions = insertions, let unwrappedAlbums = albums {
+                
+                var indexPathsToInsert = [IndexPath]()
+                unwrappedInsertions.forEach {
+                    self.items.append(BaseTableViewItem(value: unwrappedAlbums[$0], cellId: .Album))
+                    indexPathsToInsert.append(IndexPath(row: $0, section: 0))
+                }
+                
+                self.insertRows(indexPaths: indexPathsToInsert)
+            }
+        }
+    }
+    
     //    MARK: - Private methods
     
     private func deleteAlbumInfo(indexPath: IndexPath) {
         
         if let currentAlbumInfo = self.items[indexPath.row].value {
-            
             DataBaseManager.delete(albumInfo: currentAlbumInfo)
-            
-            self.items.remove(at: indexPath.row)
-            self.tableView.deleteRows(at: [indexPath], with: .automatic)
         }
     }
+    
 }

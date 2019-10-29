@@ -30,7 +30,7 @@ class DataBaseManager {
         
         let realmAlbumInfoModels = realm?.objects(RealmAlbumInfoModel.self)
         
-        return realmAlbumInfoModels?.map{
+        return realmAlbumInfoModels?.map {
             BusinessDBModelMapper.albumInfoDBToBusiness(realmAlbumInfo: $0)
         } ?? [AlbumInfoModel]()
 
@@ -62,5 +62,37 @@ class DataBaseManager {
         let realm = try? Realm()
         
         return !(realm?.objects(RealmAlbumInfoModel.self).filter("mbid == %@", mbid).isEmpty ?? true)
+    }
+    
+    static func createObserver(observer: @escaping (
+        _ albums: [AlbumInfoModel]?,
+        _ deletions: [Int]?,
+        _ insertions: [Int]?,
+        _ modifications: [Int]?
+        ) -> Void) -> NotificationToken? {
+        
+        let realm = try? Realm()
+        
+        let albums = realm?.objects(RealmAlbumInfoModel.self)
+        
+        return albums?.observe() { changes in
+            switch changes {
+                case .initial(let albums): do {
+                    let albumInfoModels = albums.map {
+                        BusinessDBModelMapper.albumInfoDBToBusiness(realmAlbumInfo: $0)
+                    }
+                    observer(Array(albumInfoModels), nil, nil, nil)
+                }
+                case .update(let albums, let deletions, let insertions, let modificaitons): do {
+                    let albumInfoModels = albums.map {
+                        BusinessDBModelMapper.albumInfoDBToBusiness(realmAlbumInfo: $0)
+                    }
+                    observer(Array(albumInfoModels), deletions, insertions, modificaitons)
+                }
+                case .error(let error):
+                    observer(nil, nil, nil, nil)
+                    print(error.localizedDescription)
+            }
+        }
     }
 }

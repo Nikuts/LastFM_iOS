@@ -22,6 +22,25 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "AlbumInfoViewController.tableView(_:cellForRowAt:):AlbumInfoViewController.swift">
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in closure #1 in FetchedAlbumsViewController.viewWillAppear(_:):FetchedAlbumsViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "self?.items.firstIndex { $0.value?.mbid == album.mbid }">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "AlbumInfoViewController.saveOrDeleteAlbum(sender:):AlbumInfoViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "isSaved">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "AlbumTableViewCell.isSaved.didset:AlbumTableViewCell.swift">
          <PersistentStrings>
             <PersistentString
@@ -30,15 +49,18 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "AlbumInfoViewController.tableView(_:cellForRowAt:):AlbumInfoViewController.swift">
-      </ContextState>
-      <ContextState
          contextName = "AlbumInfoViewController.viewDidLoad():AlbumInfoViewController.swift">
          <PersistentStrings>
             <PersistentString
                value = "self.albumInfo != nil">
             </PersistentString>
          </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in FetchedAlbumsViewController.viewWillAppear(_:):FetchedAlbumsViewController.swift">
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in closure #1 in FetchedAlbumsViewController.viewDidLoad():FetchedAlbumsViewController.swift">
       </ContextState>
    </ContextStates>
 </VariablesViewState>
