@@ -36,22 +36,22 @@ class AlbumInfoViewController: UIViewController, UITableViewDataSource {
         
         if (self.isSaved) { // if saved album
             
-            setItems()
-            self.activityIndicator.stopAnimating()
+            self.setItems()
+            self.disableLoadingIndicator()
             
             return
         }
         
         if (self.album != nil) {
             
-            self.activityIndicator.startAnimating()
+            self.enableLoadingIndicator()
             
             NetworkProvider.getAlbumInfo(mbid: album!.mbid) { [weak self] apiAlbumInfoResultModel in
                 if let apiAlbumInfoModel = apiAlbumInfoResultModel?.album {
                     
                     self?.albumInfo = APIToBusinessModelMapper.mapAlbumInfo(apiAlbumInfoModel: apiAlbumInfoModel)
                     self?.setItems()
-                    self?.activityIndicator.stopAnimating()
+                    self?.disableLoadingIndicator()
                     
                 }
             }
@@ -78,20 +78,18 @@ class AlbumInfoViewController: UIViewController, UITableViewDataSource {
             self.tableView.reloadData()
         }
 
-    // MARK: - Cells configuration
+    // MARK: - Empty message
     
-    private func configureDescriptionCell(descriptionCell: AlbumInfoDescriptionTableViewCell) {
-        if let imageUrl = URL(string: self.albumInfo?.imageUrl ?? "") {
-            descriptionCell.albumImage.af_setImage(withURL: imageUrl)
-        }
-        descriptionCell.albumDescription.text = albumInfo?.description
-        descriptionCell.albumDescription.numberOfLines = 0
-        descriptionCell.albumDescription.sizeToFit()
-    }
-    
-    private func configureTrackCell(trackCell: AlbumInfoTrackTableViewCell, track: TrackModel) {
-        trackCell.trackName.text = "\(track.name)"
-        trackCell.trackDuration.text = track.duration
+    internal func enableLoadingIndicator() {
+        self.tableView.backgroundView = nil
+        self.tableView.separatorStyle = .none
+        self.activityIndicator.startAnimating()
+      }
+      
+    internal func disableLoadingIndicator() {
+        self.tableView.backgroundView = nil
+        self.tableView.separatorStyle = .singleLine
+        self.activityIndicator.stopAnimating()
     }
     
     // MARK: - Toolbar
@@ -170,5 +168,21 @@ extension AlbumInfoViewController: UITableViewDelegate {
         }
         
         return cell
+    }
+    
+    // MARK: - Cells configuration
+       
+    private func configureDescriptionCell(descriptionCell: AlbumInfoDescriptionTableViewCell) {
+        if let imageUrl = URL(string: self.albumInfo?.imageUrl ?? "") {
+            descriptionCell.albumImage.af_setImage(withURL: imageUrl)
+        }
+        descriptionCell.albumDescription.text = albumInfo?.description
+        descriptionCell.albumDescription.numberOfLines = 0
+        descriptionCell.albumDescription.sizeToFit()
+    }
+   
+    private func configureTrackCell(trackCell: AlbumInfoTrackTableViewCell, track: TrackModel) {
+        trackCell.trackName.text = "\(track.name)"
+        trackCell.trackDuration.text = track.duration
     }
 }

@@ -39,6 +39,8 @@ class AlbumsViewController: UIViewController, UITableViewDelegate {
     
     internal func registerCells() {}
     
+    // MARK: - Empty message
+    
     internal func showEmptyMessage(message: String?) {
         
         if let unwrappedMessage = message {
@@ -64,6 +66,8 @@ class AlbumsViewController: UIViewController, UITableViewDelegate {
         self.tableView.backgroundView = nil
         self.tableView.separatorStyle = .singleLine
     }
+    
+    //MARK: - Ins and del of rows
     
     internal func insertRows(indexPaths: [IndexPath]) {
         self.tableView.beginUpdates()

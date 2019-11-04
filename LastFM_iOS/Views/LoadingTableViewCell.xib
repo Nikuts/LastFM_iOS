@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
-    <device id="retina6_1" orientation="portrait">
-        <adaptation id="fullscreen"/>
-    </device>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="15505" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15509"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -16,19 +14,26 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
-                <rect key="frame" x="0.0" y="0.0" width="320" height="43.5"/>
+                <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <activityIndicatorView opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="WzY-bF-7yy">
-                        <rect key="frame" x="150" y="12" width="20" height="20"/>
+                        <rect key="frame" x="146" y="8" width="28" height="28"/>
+                        <constraints>
+                            <constraint firstAttribute="width" secondItem="WzY-bF-7yy" secondAttribute="height" multiplier="1:1" id="25g-sK-duN"/>
+                            <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="20" id="fTg-vD-dAr"/>
+                        </constraints>
                     </activityIndicatorView>
                 </subviews>
                 <constraints>
                     <constraint firstItem="WzY-bF-7yy" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="BKA-uG-dkw"/>
+                    <constraint firstItem="WzY-bF-7yy" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="top" constant="8" id="LS9-jY-GB1"/>
                     <constraint firstItem="WzY-bF-7yy" firstAttribute="centerX" secondItem="H2p-sc-9uM" secondAttribute="centerX" id="tyb-bF-ZkV"/>
+                    <constraint firstAttribute="bottom" secondItem="WzY-bF-7yy" secondAttribute="bottom" constant="8" id="x2y-ZM-lWL"/>
                 </constraints>
             </tableViewCellContentView>
             <viewLayoutGuide key="safeArea" id="njF-e1-oar"/>
+            <point key="canvasLocation" x="139" y="116"/>
         </tableViewCell>
     </objects>
 </document>

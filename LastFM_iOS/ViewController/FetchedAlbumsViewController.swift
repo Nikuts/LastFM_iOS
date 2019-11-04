@@ -141,7 +141,7 @@ class FetchedAlbumsViewController: AlbumsViewController, UITableViewDataSource, 
             if let loadingIndex = self.items.firstIndex(where: {item in item.cellType == .Loading}) {
                 
                 self.items.remove(at: loadingIndex)
-                self.deleteRows(indexPaths: [IndexPath(row: self.items.count - 1, section: 0)])
+                self.deleteRows(indexPaths: [IndexPath(row: loadingIndex, section: 0)])
                
             }
             
